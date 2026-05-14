@@ -6,4 +6,11 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="Catalago\Services\" />
+    <Folder Include="Catalago\Repositories\" />
+    <Folder Include="Compras\" />
+    <Folder Include="Inventario\" />
+  </ItemGroup>
+
 </Project>
