@@ -1,13 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.13.35931.197 d17.13
+VisualStudioVersion = 17.13.35931.197
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ERP.Domain", "ERP.Domain\ERP.Domain.csproj", "{CB2B2838-3B83-43BB-B7E9-B79E30DEB6EB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CaminhoLivre.Modulo.Catalogo", "ERP.Domain\CaminhoLivre.Modulo.Catalogo.csproj", "{CB2B2838-3B83-43BB-B7E9-B79E30DEB6EB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ERP.Application", "ERP.Application\ERP.Application.csproj", "{F18A36EA-B076-4EFB-9237-0E371D57F62C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CaminhoLivre.Application", "ERP.Application\CaminhoLivre.Application.csproj", "{F18A36EA-B076-4EFB-9237-0E371D57F62C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ERP.Infrastructure", "ERP.Infrastructure\ERP.Infrastructure.csproj", "{1AA3AE0B-D1A1-47DB-AE90-D5D8F9015EB2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CaminhoLivre.Infrastructure", "ERP.Infrastructure\CaminhoLivre.Infrastructure.csproj", "{1AA3AE0B-D1A1-47DB-AE90-D5D8F9015EB2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
