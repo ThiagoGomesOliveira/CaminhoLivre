@@ -1,4 +1,4 @@
-﻿namespace ERP.Domain.Catalago.Entities;
+﻿namespace CaminhoLivre.Catalogo.Entities;
 
 public class Produto
 {
