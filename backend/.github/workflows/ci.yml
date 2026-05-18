@@ -1,0 +1,35 @@
+name: Integração Contínua (.NET)
+
+# O workflow será disparado sempre que um PR for aberto ou atualizado mirando a branch principal (main ou master)
+on:
+  pull_request:
+    branches: [ main, master ]
+    paths:
+      - 'backend/**' # Só roda se houver alterações dentro da pasta backend
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    # 1. Faz o checkout do código do seu repositório na máquina virtual do GitHub
+    - name: Checkout do código
+      uses: actions/checkout@v4
+
+    # 2. Instala o SDK do .NET 8 na máquina virtual
+    - name: Configurar o ambiente .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+
+    # 3. Restaura as dependências e pacotes NuGet do seu projeto
+    - name: Restaurar pacotes (NuGet)
+      run: dotnet restore backend/CaminhoLivre/
+
+    # 4. Compila o projeto para garantir que não há erros de sintaxe
+    - name: Compilar o projeto (Build)
+      run: dotnet build backend/CaminhoLivre/ --no-restore --configuration Release
+
+    # 5. Procura e executa TODOS os projetos de teste da solution automaticamente
+    - name: Executar Testes Unitários
+      run: dotnet test backend/CaminhoLivre/ --no-build --configuration Release --verbosity normal
