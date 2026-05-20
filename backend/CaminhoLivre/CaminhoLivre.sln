@@ -27,6 +27,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CaminhoLivre.Modulo.Inventa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CaminhoLivre.Modulo.Inventario.Application", "CaminhoLivre.Modulo.Inventario.Aplication\CaminhoLivre.Modulo.Inventario.Application.csproj", "{87581BC8-2CF4-40E7-935A-03284165E6FD}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Vendas", "Vendas", "{4CC93360-ED1E-4B90-82E1-FCE603B92887}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CaminhoLivre.Modulo.Vendas", "CaminhoLivre.Modulo.Vendas\CaminhoLivre.Modulo.Vendas.csproj", "{54993B49-0B47-4E74-9D8B-1904011A693A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +73,10 @@ Global
 		{87581BC8-2CF4-40E7-935A-03284165E6FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{87581BC8-2CF4-40E7-935A-03284165E6FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{87581BC8-2CF4-40E7-935A-03284165E6FD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{54993B49-0B47-4E74-9D8B-1904011A693A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{54993B49-0B47-4E74-9D8B-1904011A693A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{54993B49-0B47-4E74-9D8B-1904011A693A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{54993B49-0B47-4E74-9D8B-1904011A693A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -82,6 +90,7 @@ Global
 		{6EDE7123-E01C-43E4-9006-D12628FBF15C} = {92E846DC-0497-4203-874B-F02549DDD704}
 		{C581584C-16CC-410B-B068-6B02B0575738} = {12A81DBD-4D05-4DC5-8BA4-A0B23F129003}
 		{87581BC8-2CF4-40E7-935A-03284165E6FD} = {12A81DBD-4D05-4DC5-8BA4-A0B23F129003}
+		{54993B49-0B47-4E74-9D8B-1904011A693A} = {4CC93360-ED1E-4B90-82E1-FCE603B92887}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4287A756-6F46-4E76-97C1-742DF917B90F}
