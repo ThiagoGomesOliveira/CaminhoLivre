@@ -5,8 +5,6 @@ VisualStudioVersion = 17.13.35931.197
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CaminhoLivre.Infrastructure", "CaminhoLivre.Infrastructure\CaminhoLivre.Infrastructure.csproj", "{A42260DE-FE27-4D94-82F2-B2679F80B1C7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CaminhoLivre.Modulo.Catalogo.Application", "CaminhoLivre.Application\CaminhoLivre.Modulo.Catalogo.Application.csproj", "{F8453CA1-DE50-407F-B98B-93BD7BAAC81E}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CaminhoLivre.Modulo.Catalogo", "CaminhoLivre.Modulo.Catalogo\CaminhoLivre.Modulo.Catalogo.csproj", "{6C866DD6-3631-4C0A-89EC-FEB2EF98DE0A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CaminhoLivre.Modulo.Catalago.Tests", "CaminhoLivre.Modulo.Catalago.Tests\CaminhoLivre.Modulo.Catalago.Tests.csproj", "{0883B127-821C-457F-9E3F-FDD43976AB20}"
@@ -31,6 +29,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Vendas", "Vendas", "{4CC933
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CaminhoLivre.Modulo.Vendas", "CaminhoLivre.Modulo.Vendas\CaminhoLivre.Modulo.Vendas.csproj", "{54993B49-0B47-4E74-9D8B-1904011A693A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CaminhoLivre.Modulo.Catalogo.Application", "CaminhoLivre.Modulo.Catalago.Application\CaminhoLivre.Modulo.Catalogo.Application.csproj", "{129619A0-A3A4-13FF-64AB-8F6D67A7171D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,10 +41,6 @@ Global
 		{A42260DE-FE27-4D94-82F2-B2679F80B1C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A42260DE-FE27-4D94-82F2-B2679F80B1C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A42260DE-FE27-4D94-82F2-B2679F80B1C7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F8453CA1-DE50-407F-B98B-93BD7BAAC81E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F8453CA1-DE50-407F-B98B-93BD7BAAC81E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F8453CA1-DE50-407F-B98B-93BD7BAAC81E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F8453CA1-DE50-407F-B98B-93BD7BAAC81E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6C866DD6-3631-4C0A-89EC-FEB2EF98DE0A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6C866DD6-3631-4C0A-89EC-FEB2EF98DE0A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6C866DD6-3631-4C0A-89EC-FEB2EF98DE0A}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -77,12 +73,15 @@ Global
 		{54993B49-0B47-4E74-9D8B-1904011A693A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{54993B49-0B47-4E74-9D8B-1904011A693A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{54993B49-0B47-4E74-9D8B-1904011A693A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{129619A0-A3A4-13FF-64AB-8F6D67A7171D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{129619A0-A3A4-13FF-64AB-8F6D67A7171D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{129619A0-A3A4-13FF-64AB-8F6D67A7171D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{129619A0-A3A4-13FF-64AB-8F6D67A7171D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{F8453CA1-DE50-407F-B98B-93BD7BAAC81E} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{6C866DD6-3631-4C0A-89EC-FEB2EF98DE0A} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{0883B127-821C-457F-9E3F-FDD43976AB20} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{33B0E792-F2A9-4254-ABD3-B52433476691} = {92E846DC-0497-4203-874B-F02549DDD704}
@@ -91,6 +90,7 @@ Global
 		{C581584C-16CC-410B-B068-6B02B0575738} = {12A81DBD-4D05-4DC5-8BA4-A0B23F129003}
 		{87581BC8-2CF4-40E7-935A-03284165E6FD} = {12A81DBD-4D05-4DC5-8BA4-A0B23F129003}
 		{54993B49-0B47-4E74-9D8B-1904011A693A} = {4CC93360-ED1E-4B90-82E1-FCE603B92887}
+		{129619A0-A3A4-13FF-64AB-8F6D67A7171D} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4287A756-6F46-4E76-97C1-742DF917B90F}
