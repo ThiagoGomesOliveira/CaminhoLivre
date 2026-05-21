@@ -1,13 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using CaminhoLivre.Modulo.Catalogo.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace CaminhoLivre.Infrastructure.Persistence
 {
-    public class CaminhoLivreDbContext : DbContext
+    public class CaminhoLivreDbContext(DbContextOptions<CaminhoLivreDbContext> options) : DbContext(options)
     {
-        // O construtor recebe as opções de configuração (como a string de conexão) vindas da API
-        public CaminhoLivreDbContext(DbContextOptions<CaminhoLivreDbContext> options) : base(options)
-        {
-        }
+        public DbSet<Produto> Produtos => Set<Produto>();
+        public DbSet<Categoria> Categorias => Set<Categoria>();
 
         // Mapeia suas entidades como tabelas pesquisáveis no banco
 

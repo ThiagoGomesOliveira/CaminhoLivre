@@ -6,4 +6,8 @@
     <Nullable>disable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\CaminhoLivre.Modulo.Catalogo\CaminhoLivre.Modulo.Catalogo.csproj" />
+  </ItemGroup>
+
 </Project>
