@@ -25,6 +25,6 @@ public class Categoria
     public DateTimeOffset? DataAlteracao { get; set; }
     public string  Slug { get; set; }
 
-    private readonly List<Produto> _produtos = new();
+    private readonly List<Produto> _produtos = [];
     public IReadOnlyCollection<Produto> Produtos => _produtos.AsReadOnly();
 }
