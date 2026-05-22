@@ -10,9 +10,10 @@ public class CategoriaTest
     {
         //Arrange 
         var nome = "Eletrodomestico";
+        var descricao = "Categoria para eletrodomesticos";
 
         //Act
-        var categoria = new Categoria(nome);
+        var categoria = Categoria.Criar(nome, descricao);
 
         //Assert
         Assert.IsNotNull(categoria);

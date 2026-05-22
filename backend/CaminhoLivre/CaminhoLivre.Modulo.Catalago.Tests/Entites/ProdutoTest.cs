@@ -20,7 +20,7 @@ public class ProdutoTest
         var produto = new Produto(nome, sku, descricao, precoCusto, precoVenda)
         {
             Ncm = "123",
-            Categoria = new Categoria("Categoria Teste"),
+            Categoria = Categoria.Criar("teste", "descricao"),
             CategoriaId = 1,
             Sku = sku,
             Nome = nome,
