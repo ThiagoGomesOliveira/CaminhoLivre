@@ -24,7 +24,7 @@ public class ProdutoService : IProdutoService
             PrecoVenda = 0,
             PrecoCusto = 0,
             CategoriaId = 0,
-            Categoria = new Categoria("nome")
+            Categoria =  Categoria.Criar("teste", "descricao")
         };
 
         await _produtoRepository.AdicionarAsync(produto);

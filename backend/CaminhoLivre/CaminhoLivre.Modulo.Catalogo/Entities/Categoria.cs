@@ -1,22 +1,10 @@
-﻿namespace CaminhoLivre.Modulo.Catalogo.Entities;
+﻿using System.ComponentModel.DataAnnotations;
+using CaminhoLivre.Modulo.Catalogo.Validators;
 
+namespace CaminhoLivre.Modulo.Catalogo.Entities;
 public class Categoria
 {
-    protected Categoria()
-    {
-
-    }
-
-    public Categoria(string nome)
-    {
-        if(string.IsNullOrEmpty(nome))
-            throw new ArgumentException("O nome da categoria é obrigatório.", nameof(nome));
-
-        Nome = nome;
-        Ativo = true;
-        DataCadastro = DateTimeOffset.UtcNow;
-    }
-
+    private Categoria(){}
     public long Id { get; set; }
     public string Nome { get; set; }
     public string Descricao { get; set; }
@@ -27,4 +15,40 @@ public class Categoria
 
     private readonly List<Produto> _produtos = [];
     public IReadOnlyCollection<Produto> Produtos => _produtos.AsReadOnly();
+
+    public static Categoria Criar(string nome, string descricao)
+    {
+
+        var categoria = new Categoria
+        {
+            Nome = nome,
+            Descricao = descricao,
+            Ativo = true,
+            DataCadastro = DateTimeOffset.UtcNow
+        };
+
+        categoria.Validar();
+        return categoria;
+    }
+    private void Validar()
+    {
+        var validator = new CategoriaValidator();
+        var result = validator.Validate(this);
+
+        if (!result.IsValid)
+        {
+            var errorMessages = string.Join("; ", result.Errors.Select(e => e.ErrorMessage));
+            throw new ValidationException(errorMessages);
+        }
+    }
+
+    public void Ativar() 
+    {
+        Ativo = true;
+    }
+
+    public void Desativar() 
+    {
+        Ativo = false;
+    }
 }

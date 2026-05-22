@@ -16,8 +16,7 @@ public class CategoriaService : ICategoriaService
 
     public async Task<long> CriarAsync(CriarCategoriaDto dto)
     {
-
-        var categoria = new Categoria(dto.Nome);
+        var categoria =  Categoria.Criar(dto.Nome, dto.Descricao);
         await _categoriaRepository.AdicionarAsync(categoria);
 
         var sucesso = await _categoriaRepository.SalvarAlteracoesAsync();
