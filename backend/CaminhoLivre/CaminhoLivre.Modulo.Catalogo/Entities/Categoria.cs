@@ -5,6 +5,8 @@ namespace CaminhoLivre.Modulo.Catalogo.Entities;
 public class Categoria
 {
     private Categoria(){}
+
+    private readonly List<Produto> _produtos = [];
     public long Id { get; set; }
     public string Nome { get; set; }
     public string Descricao { get; set; }
@@ -12,8 +14,7 @@ public class Categoria
     public  DateTimeOffset DataCadastro { get; set; }
     public DateTimeOffset? DataAlteracao { get; set; }
     public string  Slug { get; set; }
-
-    private readonly List<Produto> _produtos = [];
+    
     public IReadOnlyCollection<Produto> Produtos => _produtos.AsReadOnly();
 
     public static Categoria Criar(string nome, string descricao)

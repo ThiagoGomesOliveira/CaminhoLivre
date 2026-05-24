@@ -1,3 +1,4 @@
+using System.Reflection;
 using CaminhoLivre.Infrastructure.Persistence;
 using CaminhoLivre.Infrastructure.Repositories.Catalogo;
 using CaminhoLivre.Modulo.Catalogo.Application.Interfaces;
@@ -13,7 +14,29 @@ builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new() { Title = "CaminhoLivre ERP", Version = "v1" });
+
+    // 1. Caminho para o XML da WebApi (onde ficam as Controllers)
+    var xmlWebApi = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var caminhoWebApi = Path.Combine(AppContext.BaseDirectory, xmlWebApi);
+    if (File.Exists(caminhoWebApi))
+    {
+        options.IncludeXmlComments(caminhoWebApi);
+    }
+
+    // 2. Caminho para o XML da Application (onde ficam os seus DTOs)
+    // Substitua pelo nome exato do assembly/projeto da sua Application
+    var xmlApplication = "CaminhoLivre.Modulo.Catalogo.Application.xml";
+    var caminhoApplication = Path.Combine(AppContext.BaseDirectory, xmlApplication);
+    if (File.Exists(caminhoApplication))
+    {
+        options.IncludeXmlComments(caminhoApplication);
+    }
+});
+
 
 //CONFIGURAÇÃO DO BANCO DE DADOS
 var connectionString = builder.Configuration.GetConnectionString("PostgresConnection");
@@ -42,7 +65,5 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
-
-app.MapGet("/", () => "Para mais informações acesse o swagger");
 
 app.Run();
