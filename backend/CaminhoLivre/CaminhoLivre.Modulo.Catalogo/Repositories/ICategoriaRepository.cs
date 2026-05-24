@@ -8,4 +8,6 @@ public interface ICategoriaRepository
     Task AdicionarAsync(Categoria categoria);
     void Atualizar(Categoria categoria);
     Task<bool> SalvarAlteracoesAsync();
+    Task<(IEnumerable<Categoria> Itens, int Total)> ObterTodasPaginadasAsync(int pagina, int quantidadePorPagina);
+    Task AtualizarAsync(Categoria categoria);
 }

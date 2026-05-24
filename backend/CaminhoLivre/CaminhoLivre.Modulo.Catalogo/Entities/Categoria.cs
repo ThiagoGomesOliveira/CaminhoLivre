@@ -46,10 +46,12 @@ public class Categoria
     public void Ativar() 
     {
         Ativo = true;
+        DataAlteracao = DateTimeOffset.UtcNow;
     }
 
     public void Desativar() 
     {
         Ativo = false;
+        DataAlteracao = DateTimeOffset.UtcNow;
     }
 }
