@@ -5,16 +5,11 @@ using CaminhoLivre.Modulo.Catalogo.Repositories;
 
 namespace CaminhoLivre.Modulo.Catalogo.Application.Services;
 
-public class CategoriaService : ICategoriaService
+public class CategoriaService(ICategoriaRepository categoriaRepository) : ICategoriaService
 {
-    private readonly ICategoriaRepository _categoriaRepository;
+    private readonly ICategoriaRepository _categoriaRepository = categoriaRepository;
 
-    public CategoriaService(ICategoriaRepository categoriaRepository)
-    {
-        _categoriaRepository = categoriaRepository;
-    }
-
-    public async Task<long> CriarAsync(CriarCategoriaDto dto)
+    public async Task<long> CriarAsync(CategoriaDto dto)
     {
         var categoria =  Categoria.Criar(dto.Nome, dto.Descricao);
         await _categoriaRepository.AdicionarAsync(categoria);

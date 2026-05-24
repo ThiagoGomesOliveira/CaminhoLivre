@@ -4,5 +4,5 @@ namespace CaminhoLivre.Modulo.Catalogo.Application.Interfaces;
 
 public interface ICategoriaService
 {
-    Task<long> CriarAsync(CriarCategoriaDto dto);
+    Task<long> CriarAsync(CategoriaDto dto);
 }

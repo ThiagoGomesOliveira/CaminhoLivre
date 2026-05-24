@@ -5,30 +5,14 @@ using CaminhoLivre.Modulo.Catalogo.Repositories;
 
 namespace CaminhoLivre.Modulo.Catalogo.Application.Services;
 
-public class ProdutoService : IProdutoService
+public class ProdutoService(IProdutoRepository produtoRepository) : IProdutoService
 {
-    private readonly IProdutoRepository _produtoRepository;
-
-    public ProdutoService(IProdutoRepository produtoRepository)
+    public async Task<long> CriarAsync(ProdutoDto dto)
     {
-        _produtoRepository = produtoRepository;
-    }
 
-    public async Task<long> CriarAsync(CriarProdutoDto dto)
-    {
-        var produto = new Produto
-        {
-            Sku = string.Empty,
-            Nome = dto.Nome,
-            Descricao = dto.Descricao,
-            PrecoVenda = 0,
-            PrecoCusto = 0,
-            CategoriaId = 0,
-            Categoria =  Categoria.Criar("teste", "descricao")
-        };
-
-        await _produtoRepository.AdicionarAsync(produto);
-        var sucesso = await _produtoRepository.SalvarAlteracoesAsync();
+        var produto = Produto.Criar(dto.Nome, dto.Sku, dto.Descricao, dto.PrecoCusto, dto.PrecoVenda,dto.CategoriaId);
+        await produtoRepository.AdicionarAsync(produto);
+        var sucesso = await produtoRepository.SalvarAlteracoesAsync();
         if (!sucesso)
             throw new Exception("Não foi possível salvar o produto no banco de dados.");
 
