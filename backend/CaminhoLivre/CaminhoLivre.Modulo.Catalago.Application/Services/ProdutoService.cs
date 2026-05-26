@@ -1,4 +1,5 @@
-﻿using CaminhoLivre.Modulo.Catalogo.Application.DTOs;
+﻿using CaminhoLivre.Compartilhado.Exceptions;
+using CaminhoLivre.Modulo.Catalogo.Application.DTOs;
 using CaminhoLivre.Modulo.Catalogo.Application.Interfaces;
 using CaminhoLivre.Modulo.Catalogo.Entities;
 using CaminhoLivre.Modulo.Catalogo.Repositories;
@@ -13,7 +14,7 @@ public class ProdutoService(IProdutoRepository produtoRepository) : IProdutoServ
         await produtoRepository.AdicionarAsync(produto);
         var sucesso = await produtoRepository.SalvarAlteracoesAsync();
         if (!sucesso)
-            throw new Exception("Não foi possível salvar o produto no banco de dados.");
+            throw new BusinessRuleException("Não foi possível salvar o produto no banco de dados.");
 
         return produto.Id;
     }
@@ -22,7 +23,7 @@ public class ProdutoService(IProdutoRepository produtoRepository) : IProdutoServ
     {
         var produto = produtoRepository.ObterPorIdAsync(id)
             .GetAwaiter()
-            .GetResult() ?? throw new Exception("Produto não encontrado.");
+            .GetResult() ?? throw new NotFoundException("Produto não encontrado.");
 
         produto.Desativar();
         await produtoRepository.AtualizarAsync(produto);
@@ -33,7 +34,7 @@ public class ProdutoService(IProdutoRepository produtoRepository) : IProdutoServ
     {
         var produto = produtoRepository.ObterPorIdAsync(id)
             .GetAwaiter()
-            .GetResult() ?? throw new Exception("Produto não encontrado.");
+            .GetResult() ?? throw new NotFoundException("Produto não encontrado.");
 
         produto.Ativar();
         await produtoRepository.AtualizarAsync(produto);
@@ -44,7 +45,7 @@ public class ProdutoService(IProdutoRepository produtoRepository) : IProdutoServ
     {
         var produto = produtoRepository.ObterPorIdAsync(id)
             .GetAwaiter()
-            .GetResult() ?? throw new Exception("Produto não encontrado.");
+            .GetResult() ?? throw new NotFoundException("Produto não encontrado.");
 
         produto.Nome = dto.Nome;
         produto.Sku = dto.Sku;

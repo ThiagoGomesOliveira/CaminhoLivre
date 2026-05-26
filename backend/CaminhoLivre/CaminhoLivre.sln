@@ -33,6 +33,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CaminhoLivre.Modulo.Catalog
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CaminhoLivre.WebApi", "CaminhoLivre.WebApi\CaminhoLivre.WebApi.csproj", "{C412C769-E1E1-444F-A6FC-0EB1AE5A0254}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CaminhoLivre.Compartilhado", "CaminhoLivre.Compartilhado\CaminhoLivre.Compartilhado.csproj", "{CC44089E-E50C-4BC6-8781-463F724F6230}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -83,6 +85,10 @@ Global
 		{C412C769-E1E1-444F-A6FC-0EB1AE5A0254}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C412C769-E1E1-444F-A6FC-0EB1AE5A0254}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C412C769-E1E1-444F-A6FC-0EB1AE5A0254}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CC44089E-E50C-4BC6-8781-463F724F6230}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CC44089E-E50C-4BC6-8781-463F724F6230}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CC44089E-E50C-4BC6-8781-463F724F6230}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CC44089E-E50C-4BC6-8781-463F724F6230}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
