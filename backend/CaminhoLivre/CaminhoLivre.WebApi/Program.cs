@@ -4,6 +4,7 @@ using CaminhoLivre.Infrastructure.Repositories.Catalogo;
 using CaminhoLivre.Modulo.Catalogo.Application.Interfaces;
 using CaminhoLivre.Modulo.Catalogo.Application.Services;
 using CaminhoLivre.Modulo.Catalogo.Repositories;
+using CaminhoLivre.WebApi.Middlewares;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -59,6 +60,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseHttpsRedirection();
 

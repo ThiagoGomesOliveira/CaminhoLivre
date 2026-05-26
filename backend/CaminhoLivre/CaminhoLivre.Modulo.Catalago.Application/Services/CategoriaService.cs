@@ -1,4 +1,5 @@
-﻿using CaminhoLivre.Modulo.Catalogo.Application.DTOs;
+﻿using CaminhoLivre.Compartilhado.Exceptions;
+using CaminhoLivre.Modulo.Catalogo.Application.DTOs;
 using CaminhoLivre.Modulo.Catalogo.Application.Interfaces;
 using CaminhoLivre.Modulo.Catalogo.Entities;
 using CaminhoLivre.Modulo.Catalogo.Repositories;
@@ -13,7 +14,7 @@ public class CategoriaService(ICategoriaRepository categoriaRepository) : ICateg
     {
         var categoria = _categoriaRepository.ObterPorIdAsync(id)
             .GetAwaiter()
-            .GetResult() ?? throw new Exception("Categoria não encontrada.");
+            .GetResult() ?? throw new NotFoundException("Categoria não encontrada.");
 
         categoria.Ativar();
         await _categoriaRepository.AtualizarAsync(categoria);
@@ -24,7 +25,7 @@ public class CategoriaService(ICategoriaRepository categoriaRepository) : ICateg
     {
         var categoria = _categoriaRepository.ObterPorIdAsync(id)
             .GetAwaiter()
-            .GetResult() ?? throw new Exception("Categoria não encontrada.");
+            .GetResult() ?? throw new NotFoundException("Categoria não encontrada.");
 
         categoria.Nome = dto.Nome;
         categoria.Descricao = dto.Descricao;
@@ -39,7 +40,7 @@ public class CategoriaService(ICategoriaRepository categoriaRepository) : ICateg
 
         var sucesso = await _categoriaRepository.SalvarAlteracoesAsync();
         if (!sucesso)
-            throw new Exception("Não foi possível salvar a categoria no banco de dados.");
+            throw new BusinessRuleException("Não foi possível salvar a categoria no banco de dados.");
 
         return categoria.Id;
     }
@@ -48,7 +49,7 @@ public class CategoriaService(ICategoriaRepository categoriaRepository) : ICateg
     {
         var categoria = _categoriaRepository.ObterPorIdAsync(id)
             .GetAwaiter()
-            .GetResult() ?? throw new Exception("Categoria não encontrada.");
+            .GetResult() ?? throw new NotFoundException("Categoria não encontrada.");
 
 
         categoria.Desativar();

@@ -9,6 +9,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\CaminhoLivre.Compartilhado\CaminhoLivre.Compartilhado.csproj" />
 		<ProjectReference Include="..\CaminhoLivre.Modulo.Catalogo\CaminhoLivre.Modulo.Catalogo.csproj" />
 	</ItemGroup>
 
