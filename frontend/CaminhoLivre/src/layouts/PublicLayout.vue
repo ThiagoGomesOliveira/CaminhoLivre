@@ -1,89 +1,102 @@
+<script setup>
+import { useRouter } from 'vue-router';
+import Button from 'primevue/button';
+
+const router = useRouter();
+
+const irParaAdmin = () => {
+  router.push('/admin');
+};
+</script>
 
 <template>
-  <div class="layout-wrapper">
-    <header class="topbar">
-      <div class="logo">
-        <i class="pi pi-shield text-xl mr-2"></i>
-        <span>Caminho Livre ERP</span>
+  <div class="public-wrapper">
+    <!-- BARRA SUPERIOR SIMPLES DO SITE -->
+    <nav class="public-nav">
+      <div class="nav-brand">
+        <i class="pi pi-globe text-xl mr-2"></i>
+        <span>Caminho Livre</span>
       </div>
-      <div class="user-profile">
-        <i class="pi pi-user mr-2"></i>
-        <span>Desenvolvedor</span>
+      
+      <div class="nav-links">
+        <a href="#" class="nav-link">Início</a>
+        <a href="#" class="nav-link">Catálogo Público</a>
       </div>
-    </header>
 
-    <div class="layout-container">
-      <aside class="sidebar">
-        <Menu :model="menuItems" class="custom-menu" />
-      </aside>
+      <div class="nav-actions">
+        <!-- Botão para saltar para o Painel Admin do ERP -->
+        <Button label="Acessar ERP" icon="pi pi-sign-in" severity="success" size="small" @click="irParaAdmin" />
+      </div>
+    </nav>
 
-      <main class="content">
-        <div class="card-container">
-          <RouterView />
-        </div>
-      </main>
-    </div>
+    <!-- CONTEÚDO DINÂMICO DO SITE PÚBLICO -->
+    <main class="public-content">
+      <RouterView />
+    </main>
+
+    <!-- RODAPÉ -->
+    <footer class="public-footer">
+      <p>&copy; 2026 Caminho Livre. Todos os direitos reservados.</p>
+    </footer>
   </div>
 </template>
 
-<style>
-/* Layout Estrutural em L */
-.layout-wrapper {
+<style scoped>
+.public-wrapper {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  min-height: 100vh;
   font-family: var(--p-font-family);
-  background-color: #f1f5f9;
+  background-color: #ffffff;
 }
 
-.topbar {
+.public-nav {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 60px;
+  height: 70px;
+  padding: 0 2rem;
   background-color: #ffffff;
-  padding: 0 1.5rem;
-  border-bottom: 1px solid #e2e8f0;
-  z-index: 999;
+  border-bottom: 1px solid #f1f5f9;
 }
 
-.logo {
+.nav-brand {
   display: flex;
   align-items: center;
   font-weight: 700;
-  color: #10b981; /* Cor Verde do PrimeVue Aura */
-  font-size: 1.2rem;
+  font-size: 1.3rem;
+  color: #334155;
 }
 
-.layout-container {
+.nav-brand i {
+  color: #10b981;
+}
+
+.nav-links {
   display: flex;
+  gap: 2rem;
+}
+
+.nav-link {
+  text-decoration: none;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.public-content {
   flex: 1;
-  overflow: hidden;
+  padding: 2rem;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
 }
 
-.sidebar {
-  width: 260px;
-  background-color: #ffffff;
-  border-right: 1px solid #e2e8f0;
-  padding: 1rem 0.5rem;
-}
-
-.custom-menu {
-  border: none !important;
-  width: 100% !important;
-}
-
-.content {
-  flex: 1;
+.public-footer {
+  background-color: #f8fafc;
   padding: 1.5rem;
-  overflow-y: auto;
-}
-
-.card-container {
-  background-color: #ffffff;
-  border-radius: 8px;
-  padding: 1.5rem;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-  min-height: 100%;
+  text-align: center;
+  font-size: 0.875rem;
+  color: #94a3b8;
+  border-top: 1px solid #e2e8f0;
 }
 </style>
