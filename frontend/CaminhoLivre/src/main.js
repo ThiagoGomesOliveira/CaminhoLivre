@@ -22,7 +22,7 @@ app.use(PrimeVue, {
     theme: {
         preset: Aura,
         options: {
-            darkModeSelector: 'none' // Garante que o sistema comece no modo claro
+            darkModeSelector: '.p-dark' // Garante que o sistema comece no modo claro
         }
     }
 })
