@@ -10,6 +10,18 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+// --- INÍCIO DA CONFIGURAÇÃO DO CORS ---
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("EcommerceCorsPolicy", policy =>
+    {
+        policy.WithOrigins("http://localhost:5173") // A URL exata do seu Vue
+              .AllowAnyHeader()                     // Permite qualquer cabeçalho (Content-Type, Authorization, etc)
+              .AllowAnyMethod();                    // Permite GET, POST, PUT, DELETE
+    });
+});
+// --- FIM DA CONFIGURAÇÃO DO CORS ---
 
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -62,6 +74,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
+app.UseCors("EcommerceCorsPolicy");
 
 app.UseHttpsRedirection();
 
