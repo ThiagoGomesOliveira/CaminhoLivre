@@ -12,27 +12,27 @@ function handleLogout() {
   router.push('/')
 }
 
-const isDark = ref(false);
+const isDark = ref(true);
 
 const toggleDarkMode = () => {
   const element = document.querySelector('html');
   if (element) {
     element.classList.toggle('p-dark');
     isDark.value = element.classList.contains('p-dark');
-    
-    // Salva a preferência do usuário no navegador
     localStorage.setItem('erp-theme', isDark.value ? 'dark' : 'light');
   }
 };
 
-// Quando o sistema carrega, verifica se o usuário já tinha uma preferência salva
 onMounted(() => {
   const savedTheme = localStorage.getItem('erp-theme');
   const element = document.querySelector('html');
   
-  if (savedTheme === 'dark' && element) {
+  if ((savedTheme === 'dark' || !savedTheme) && element) {
     element.classList.add('p-dark');
     isDark.value = true;
+  } else if (savedTheme === 'light' && element) {
+    element.classList.remove('p-dark');
+    isDark.value = false;
   }
 });
 
@@ -55,9 +55,14 @@ const menuItems = ref([
 
 <template>
   <div class="layout-wrapper">
+    <div v-if="isDark" class="background-overlay"></div>
+
     <header class="topbar">
-      <div class="logo">
-        <span>Caminho Livre</span>
+      <div class="logo-area">
+        <i class="pi pi-truck"></i>
+        <span class="logo-text">
+          Caminho <strong>Livre</strong>
+        </span>
       </div>
       
       <div class="actions-wrapper">
@@ -68,16 +73,16 @@ const menuItems = ref([
           rounded 
           @click="toggleDarkMode" 
           v-tooltip.bottom="isDark ? 'Modo Claro' : 'Modo Escuro'"
-          class="mr-2"
+          class="theme-toggle-btn"
         />
 
-         <button 
-        @click="handleLogout"
-        class="flex items-center gap-2 px-3 py-1.5 rounded-md git  hover:bg-red-600/20 hover:text-red-500 transition-colors"
-      >
-        <span>SAIR</span>
-        <XMarkIcon class="w-4 h-4" />
-      </button>
+        <button 
+          @click="handleLogout"
+          class="logout-btn"
+        >
+          <span>SAIR</span>
+          <i class="pi pi-sign-out"></i>
+        </button>
 
         <div class="user-profile">
           <i class="pi pi-user mr-2"></i>
@@ -105,58 +110,143 @@ const menuItems = ref([
   display: flex;
   flex-direction: column;
   height: 100vh;
-  font-family: var(--p-font-family);
-  /* Varáveis do PrimeVue que mudam sozinhas no Dark Mode */
-  background-color: var(--p-content-background); 
+  overflow: hidden;
+  position: relative;
+  background: var(--p-surface-0);
+  color: var(--p-text-color);
+  font-family: Inter, sans-serif;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+:global(html.p-dark) .layout-wrapper {
+  background:
+    radial-gradient(circle at top right, rgba(37,99,235,0.25), transparent 25%),
+    linear-gradient(135deg, #020617 0%, #081225 45%, #0f172a 100%);
+}
+
+.background-overlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(255,255,255,0.04), transparent 60%);
+  pointer-events: none;
 }
 
 .topbar {
+  position: relative;
+  z-index: 999;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 60px;
-  background-color: var(--p-content-background);
-  padding: 0 1.5rem;
+  height: 75px;
+  padding: 0 4rem;
+  backdrop-filter: blur(12px);
+  background: var(--p-content-background);
   border-bottom: 1px solid var(--p-content-border-color);
-  z-index: 999;
+  transition: background-color 0.3s, border-color 0.3s;
 }
 
-.logo {
+:global(html.p-dark) .topbar {
+  background: rgba(255, 255, 255, 0.01);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.logo-area {
   display: flex;
   align-items: center;
+  gap: .8rem;
+}
+
+.logo-area i {
+  font-size: 1.8rem;
+  color: #3b82f6 !important;
+}
+
+.logo-text {
+  font-size: 1.6rem;
   font-weight: 700;
-  color: #10b981;
-  font-size: 1.2rem;
+  color: var(--p-text-color);
+}
+
+.logo-text strong {
+  color: #3b82f6 !important;
 }
 
 .actions-wrapper {
   display: flex;
   align-items: center;
+  gap: 1.5rem;
+}
+
+.theme-toggle-btn {
+  color: var(--p-text-muted-color) !important;
+  transition: 0.3s;
+}
+
+.theme-toggle-btn:hover {
+  color: var(--p-text-color) !important;
+  background: var(--p-surface-hover) !important;
+}
+
+.logout-btn {
+  display: flex;
+  align-items: center;
   gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.logout-btn:hover {
+  background: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+  transform: translateY(-1px);
 }
 
 .user-profile {
   display: flex;
   align-items: center;
-  font-size: 0.9rem;
-  color: var(--p-text-color);
+  font-size: 0.95rem;
+  color: var(--p-text-muted-color);
   border-left: 1px solid var(--p-content-border-color);
-  padding-left: 1rem;
+  padding-left: 1.5rem;
   height: 30px;
+}
+
+:global(html.p-dark) .user-profile {
+  border-left: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+/* Cor do ícone do usuário em azul */
+.user-profile i {
+  color: #3b82f6 !important;
 }
 
 .layout-container {
   display: flex;
   flex: 1;
   overflow: hidden;
-  background-color: var(--p-content-background);
+  position: relative;
+  z-index: 5;
 }
 
 .sidebar {
-  width: 260px;
-  background-color: var(--p-content-background);
+  width: 280px;
+  background: var(--p-content-background);
   border-right: 1px solid var(--p-content-border-color);
-  padding: 1rem 0.5rem;
+  padding: 2rem 1rem;
+  transition: background-color 0.3s, border-color 0.3s;
+}
+
+:global(html.p-dark) .sidebar {
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(5px);
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .custom-menu {
@@ -165,19 +255,85 @@ const menuItems = ref([
   background: transparent !important;
 }
 
+:deep(.p-menu) {
+  background: transparent;
+  border: none;
+}
+
+:deep(.p-menu-submenu-label) {
+  background: transparent;
+  color: #3b82f6 !important;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 1px;
+  margin-top: 1rem;
+  padding: 0.5rem 0.75rem;
+}
+
+:deep(.p-menuitem-link) {
+  color: var(--p-text-muted-color) !important;
+  padding: 0.75rem 1rem !important;
+  border-radius: 12px;
+  transition: 0.3s !important;
+  margin-bottom: 0.25rem;
+}
+
+:deep(.p-menuitem-link:hover) {
+  background: var(--p-surface-hover) !important;
+  color: var(--p-text-color) !important;
+}
+
+:global(html.p-dark) :deep(.p-menuitem-link) {
+  color: #cbd5e1 !important;
+}
+
+:global(html.p-dark) :deep(.p-menuitem-link:hover) {
+  background: rgba(255, 255, 255, 0.06) !important;
+  color: white !important;
+}
+
+:deep(.p-menuitem-icon) {
+  color: #3b82f6 !important;
+  margin-right: 0.75rem;
+}
+
 .content {
   flex: 1;
-  padding: 1.5rem;
+  padding: 2.5rem 4rem;
   overflow-y: auto;
-  /* Dá o tom cinza de fundo no Light e grafite escuro no Dark */
-  background-color: var(--p-textarea-background); 
+  background: var(--p-surface-50);
+  transition: background-color 0.3s;
+}
+
+:global(html.p-dark) .content {
+  background: transparent;
 }
 
 .card-container {
-  background-color: var(--p-content-background);
-  border-radius: 8px;
-  padding: 1.5rem;
+  background: var(--p-content-background);
   border: 1px solid var(--p-content-border-color);
+  border-radius: 24px;
+  padding: 2.5rem;
   min-height: 100%;
+  transition: background-color 0.3s, border-color 0.3s;
+}
+
+:global(html.p-dark) .card-container {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+}
+
+@media (max-width: 992px) {
+  .topbar {
+    padding: 0 1.5rem;
+  }
+  .content {
+    padding: 1.5rem;
+  }
+  .sidebar {
+    width: 240px;
+  }
 }
 </style>
