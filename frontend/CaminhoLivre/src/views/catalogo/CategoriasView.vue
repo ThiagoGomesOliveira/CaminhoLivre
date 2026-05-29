@@ -1,25 +1,35 @@
 <script setup>
 import { ref } from 'vue';
+import {onMounted} from 'vue';
+import {useCategorias} from '../../composables/useCategorias';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import InputText from 'primevue/inputtext';
 import Textarea from 'primevue/textarea';
 import Dropdown from 'primevue/dropdown';
 import Button from 'primevue/button';
+import ProgressSpinner from 'primevue/progressspinner';
 
-// Dados fictícios para a tabela rodar
-const categorias = ref([
-  { id: 1, nome: 'Eletrônicos', descricao: 'Componentes e dispositivos', status: 'Ativo' },
-  { id: 2, nome: 'Escritório', descricao: 'Materiais de escritório', status: 'Ativo' },
-  { id: 3, nome: 'Logística', descricao: 'Suprimentos e caixas', status: 'Inativo' },
-]);
+const {categorias, loading, error, carregarCategorias, salvarCategoria} = useCategorias();
+
+onMounted(async () => {
+  await carregarCategorias();
+});
 
 // Estado do formulário lateral
 const categoriaSelecionada = ref({ id: null, nome: '', descricao: '', status: 'Ativo' });
+const salvando = ref(false);
 
 // Função para quando clicar em uma linha da tabela
 const selecionarCategoria = (event) => {
   categoriaSelecionada.value = { ...event.data };
+
+  if (categoriaSelecionada.value.ativo === true) {
+    categoriaSelecionada.value.ativo = 'Ativo';
+  } else {
+    categoriaSelecionada.value.ativo = 'Inativo';
+  }
+
 };
 
 // Limpa o formulário
@@ -28,17 +38,11 @@ const novaCategoria = () => {
 };
 
 // Salva ou Edita
-const salvarCategoria = () => {
-  if (!categoriaSelecionada.value.nome) return;
-  
-  if (categoriaSelecionada.value.id) {
-    const index = categorias.value.findIndex(c => c.id === categoriaSelecionada.value.id);
-    categorias.value[index] = { ...categoriaSelecionada.value };
-  } else {
-    categoriaSelecionada.value.id = categorias.value.length + 1;
-    categorias.value.push({ ...categoriaSelecionada.value });
-  }
-  novaCategoria();
+
+
+const definirEstiloLinha = (data) => {
+  // Se a categoria estiver inativa, aplica uma classe CSS customizada
+  return data.status === false || data.status === 'Inativo' ? 'linha-inativa' : '';
 };
 </script>
 
@@ -56,24 +60,41 @@ const salvarCategoria = () => {
           <InputText placeholder="Pesquisar categoria..." class="p-inputtext-sm" />
         </span>
       </div>
+      
+      <div class="card-container">
+    <div v-if="loading" class="flex justify-center p-5">
+      <ProgressSpinner style="width: 50px; height: 50px" />
+    </div>
+
+    <div v-else-if="error" class="p-error mb-4">
+      {{ error }}
+    </div>
 
       <DataTable 
-        :value="categorias" 
+        :value="categorias"
         class="p-datatable-sm custom-table" 
         selectionMode="single" 
         dataKey="id"
+        :rowClass="definirEstiloLinha"
         @row-select="selecionarCategoria"
       >
         <Column field="id" header="Cód." headerStyle="width: 4rem"></Column>
         <Column field="nome" header="Nome da Categoria" sortable></Column>
-        <Column field="status" header="Status" headerStyle="width: 6rem">
-          <template #body="slotProps">
-            <span :class="'badge-' + slotProps.data.status.toLowerCase()">
-              {{ slotProps.data.status }}
-            </span>
-          </template>
+        <Column field="descricao" header="Descrição"></Column>
+        <Column field="ativo" header="Status" headerStyle="width: 8rem" sortable>
+        <template #body="slotProps">
+          <span v-if="slotProps.data.ativo === true" class="status-badge badge-success">
+                 <i class="pi pi-check-circle text-xs mr-1"></i>
+                Ativo
+          </span>
+          <span v-else class="status-badge badge-danger">
+                <i class="pi pi-times-circle text-xs mr-1"></i>
+                Inativo
+          </span>
+        </template>
         </Column>
       </DataTable>
+      </div>
     </div>
 
     <aside class="form-column">
@@ -94,7 +115,7 @@ const salvarCategoria = () => {
 
         <div class="field">
           <label for="status">Status Operacional</label>
-          <Dropdown id="status" v-model="categoriaSelecionada.status" :options="['Ativo', 'Inativo']" class="w-full p-inputtext-sm" />
+          <Dropdown id="status" v-model="categoriaSelecionada.ativo" :options="['Ativo', 'Inativo']" class="w-full p-inputtext-sm" />
         </div>
       </div>
 
@@ -179,21 +200,47 @@ const salvarCategoria = () => {
 }
 
 /* Badges de Status - Tons escurecidos para atender regras de acessibilidade */
-.badge-ativo {
-  background-color: #dcfce7;
-  color: #166534; 
+/* Base dos Badges de Status */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
   padding: 0.25rem 0.625rem;
-  border-radius: 4px;
+  border-radius: 6px;
   font-size: 0.75rem;
   font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: 1px solid transparent;
 }
 
-.badge-inativo {
+/* Status Ativo (Verde) */
+.badge-success {
+  background-color: rgba(34, 197, 94, 0.15); /* Fundo verde translúcido */
+  color: #4ade80;                            /* Texto verde vivo para Dark Mode */
+  border-color: rgba(34, 197, 94, 0.3);
+}
+
+/* Status Inativo (Vermelho) */
+.badge-danger {
+  background-color: rgba(239, 68, 68, 0.15);  /* Fundo vermelho translúcido */
+  color: #f87171;                             /* Texto vermelho vivo para Dark Mode */
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+/* Micro-ajuste automático caso o sistema volte para o Modo Claro (.p-dark desativado) */
+:not(html.p-dark) .badge-success {
+  background-color: #dcfce7;
+  color: #166534;
+}
+
+:not(html.p-dark) .badge-danger {
   background-color: #fee2e2;
-  color: #991b1b; 
-  padding: 0.25rem 0.625rem;
-  border-radius: 4px;
-  font-size: 0.75rem;
-  font-weight: 700;
+  color: #991b1b;
+}
+
+/* Aplica uma opacidade de 60% na linha inteira do grid se o produto/categoria estiver inativo */
+::v-deep(.linha-inativa) {
+  opacity: 0.6;
+  text-decoration: line-through rgba(255, 255, 255, 0.2); /* Opcional: risca de leve o texto */
 }
 </style>

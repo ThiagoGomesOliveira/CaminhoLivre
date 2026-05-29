@@ -5,6 +5,7 @@ import router from './router'
 
 // 1. Importa o coração do PrimeVue
 import PrimeVue from 'primevue/config'
+import Tooltip from 'primevue/tooltip';
 
 // 2. Importa o tema Aura oficial do pacote que você acabou de instalar
 import Aura from '@primevue/themes/aura'
@@ -26,5 +27,5 @@ app.use(PrimeVue, {
         }
     }
 })
-
+app.directive('tooltip', Tooltip);
 app.mount('#app')
