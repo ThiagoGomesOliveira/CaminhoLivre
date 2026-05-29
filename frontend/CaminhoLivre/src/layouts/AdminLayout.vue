@@ -6,10 +6,14 @@ import Button from 'primevue/button';
 
 const router = useRouter();
 
-// Estado para controlar se o Dark Mode está ativo
+function handleLogout() {
+  localStorage.removeItem('token')
+  localStorage.removeItem('user')  
+  router.push('/')
+}
+
 const isDark = ref(false);
 
-// Função que liga/desliga o modo escuro injetando a classe no HTML
 const toggleDarkMode = () => {
   const element = document.querySelector('html');
   if (element) {
@@ -66,6 +70,14 @@ const menuItems = ref([
           v-tooltip.bottom="isDark ? 'Modo Claro' : 'Modo Escuro'"
           class="mr-2"
         />
+
+         <button 
+        @click="handleLogout"
+        class="flex items-center gap-2 px-3 py-1.5 rounded-md git  hover:bg-red-600/20 hover:text-red-500 transition-colors"
+      >
+        <span>SAIR</span>
+        <XMarkIcon class="w-4 h-4" />
+      </button>
 
         <div class="user-profile">
           <i class="pi pi-user mr-2"></i>
