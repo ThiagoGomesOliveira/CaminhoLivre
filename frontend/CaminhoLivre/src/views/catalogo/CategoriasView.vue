@@ -9,16 +9,26 @@ import Textarea from 'primevue/textarea';
 import Dropdown from 'primevue/dropdown';
 import Button from 'primevue/button';
 import ProgressSpinner from 'primevue/progressspinner';
+import { FilterMatchMode } from '@primevue/core/api';
 
-const {categorias, loading, error, carregarCategorias, salvarCategoria} = useCategorias();
+const {categorias,
+      loading,
+      error,
+      carregarCategorias,
+      salvarCategoria,
+      limparFormulario,
+      salvando,
+      categoriaSelecionada
+     } = useCategorias();
+
+const filtros = ref({
+    global: { value: null, matchMode: 'contains' }
+});
 
 onMounted(async () => {
   await carregarCategorias();
 });
 
-// Estado do formulário lateral
-const categoriaSelecionada = ref({ id: null, nome: '', descricao: '', status: 'Ativo' });
-const salvando = ref(false);
 
 // Função para quando clicar em uma linha da tabela
 const selecionarCategoria = (event) => {
@@ -29,16 +39,7 @@ const selecionarCategoria = (event) => {
   } else {
     categoriaSelecionada.value.ativo = 'Inativo';
   }
-
 };
-
-// Limpa o formulário
-const novaCategoria = () => {
-  categoriaSelecionada.value = { id: null, nome: '', descricao: '', status: 'Ativo' };
-};
-
-// Salva ou Edita
-
 
 const definirEstiloLinha = (data) => {
   // Se a categoria estiver inativa, aplica uma classe CSS customizada
@@ -52,12 +53,10 @@ const definirEstiloLinha = (data) => {
     <div class="main-column">
       <div class="view-header">
         <div>
-          <h1 class="text-xl font-bold text-color">Categorias de Produtos</h1>
-          <p class="text-sm text-slate-500">Gerencie a classificação do catálogo para a logística.</p>
+          <h1 class="text-xl font-bold text-color">Categorias</h1>
         </div>
         <span class="p-input-icon-left">
-          <i class="pi pi-search" />
-          <InputText placeholder="Pesquisar categoria..." class="p-inputtext-sm" />
+          <InputText v-model="filtros.global.value" placeholder="Pesquisar categoria..." class="p-inputtext-sm" />
         </span>
       </div>
       
@@ -72,6 +71,8 @@ const definirEstiloLinha = (data) => {
 
       <DataTable 
         :value="categorias"
+        v-model:filters="filtros"
+        :globalFilterFields="['nome']"
         class="p-datatable-sm custom-table" 
         selectionMode="single" 
         dataKey="id"
@@ -79,7 +80,7 @@ const definirEstiloLinha = (data) => {
         @row-select="selecionarCategoria"
       >
         <Column field="id" header="Cód." headerStyle="width: 4rem"></Column>
-        <Column field="nome" header="Nome da Categoria" sortable></Column>
+        <Column field="nome" header="Nome" sortable></Column>
         <Column field="descricao" header="Descrição"></Column>
         <Column field="ativo" header="Status" headerStyle="width: 8rem" sortable>
         <template #body="slotProps">
@@ -121,7 +122,7 @@ const definirEstiloLinha = (data) => {
 
       <div class="form-actions">
         <Button label="Salvar Categoria" severity="success" icon="pi pi-check" size="small" @click="salvarCategoria" />
-        <Button label="Cancelar" severity="secondary" text size="small" @click="novaCategoria" />
+        <Button label="Cancelar" severity="secondary" text size="small" @click="limparFormulario" />
       </div>
     </aside>
 

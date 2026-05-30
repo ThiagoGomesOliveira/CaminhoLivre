@@ -21,4 +21,11 @@ public record AtualizarCategoriaDto
     [Required(ErrorMessage = "A descrição da categoria é obrigatório.")]
     [StringLength(500, MinimumLength = 3, ErrorMessage = "O nome deve ter entre 3 e 100 caracteres.")]
     public string Descricao { get; init; }
+
+    /// <summary>
+    /// Indica se a categoria está ativa.
+    /// </summary>
+    /// <example>true</example>
+    public bool Ativo { get; init; }
+
 }
