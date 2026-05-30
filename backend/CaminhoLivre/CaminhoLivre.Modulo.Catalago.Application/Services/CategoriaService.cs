@@ -29,6 +29,7 @@ public class CategoriaService(ICategoriaRepository categoriaRepository) : ICateg
 
         categoria.Nome = dto.Nome;
         categoria.Descricao = dto.Descricao;
+        categoria.Ativo = dto.Ativo;
         await _categoriaRepository.AtualizarAsync(categoria);
         await _categoriaRepository.SalvarAlteracoesAsync();
     }
