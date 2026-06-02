@@ -1,5 +1,13 @@
 <script setup>
 import { ref } from 'vue';
+import { onMounted } from 'vue';
+import { useProdutos } from '../../composables/useProdutos';
+
+const { produtos,  loading, listarProdutos ,  criarProduto, atualizarProduto } = useProdutos();
+
+onMounted(async () => {
+    await listarProdutos();
+});
 
 // 1. FILTROS E CONTROLE DO MODAL
 const filtros = ref({
@@ -18,8 +26,7 @@ import IconField from 'primevue/iconfield';
 import InputIcon from 'primevue/inputicon';
 import Dialog from 'primevue/dialog';
 
-// Estados de Loading de rede
-const loading = ref(false);
+
 const salvando = ref(false);
 
 // Simulação de categorias para o Dropdown
@@ -29,20 +36,13 @@ const categoriasDisponiveis = ref([
     { id: 3, nome: 'Logística / Embalagens' }
 ]);
 
-// Simulação de produtos para preencher a tabela expandida
-const produtos = ref([
-    { id: 1,  nome: 'Smartphone XYZ', sku: "VES-CAM-PRM", preco: 1599.90, precoCusto: 1200.00, categoriaNome: 'Eletrônicos', status: 'Ativo', descricao: 'Aparelho 128GB' },
-    { id: 2,  nome: 'Camiseta Dry Fit', sku: "VES-CAM-PRM", preco: 79.90, precoCusto: 50.00, categoriaNome: 'Vestuário', status: 'Ativo', descricao: 'Tamanho G' },
-    { id: 3,  nome: 'Palete de Madeira PBR', sku: "VES-CAM-PRM", preco: 120.00, precoCusto: 80.00, categoriaNome: 'Logística / Embalagens', status: 'Inativo', descricao: 'Padrão PBR novo' }
-]);
-
 // Objeto reativo do formulário
 const produtoSelecionado = ref({
     id: null,
     codigoBarras: '',
     nome: '',
     descricao: '',
-    preco: 0,
+    precoVenda: 0,
     precoCusto: 0,
     sku: '',
     categoriaId: null,
@@ -70,7 +70,7 @@ const limparFormulario = () => {
         id: null,
         nome: '',
         descricao: '',
-        preco: 0,
+        precoVenda: 0,
         precoCusto: 0,
         categoriaId: null,
         ativo: 'Ativo',
@@ -137,9 +137,9 @@ const salvarProdutoMock = () => {
         <Column field="sku" header="Sku" sortable class="text-slate-400" headerStyle="width: 10rem"></Column>
         <Column field="categoriaNome" header="Categoria" sortable class="text-slate-400" headerStyle="width: 15rem"></Column>
         
-        <Column field="preco" header="Preço de Venda" sortable headerStyle="width: 10rem" class="font-semibold">
+        <Column field="precoVenda" header="Preço de Venda" sortable headerStyle="width: 10rem" class="font-semibold">
           <template #body="slotProps">
-            {{ slotProps.data.preco.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) }}
+            {{ slotProps.data.precoVenda.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) }}
           </template>
         </Column>
 
@@ -150,10 +150,10 @@ const salvarProdutoMock = () => {
         </Column>
 
         
-        <Column field="status" header="Status" headerStyle="width: 8rem">
+        <Column field="ativo" header="Status" headerStyle="width: 8rem">
           <template #body="slotProps">
-            <span :class="slotProps.data.status === 'Ativo' ? 'text-green-400 font-bold' : 'text-red-400 font-bold'">
-              {{ slotProps.data.status }}
+            <span :class="slotProps.data.ativo === 'Ativo' ? 'text-green-400 font-bold' : 'text-red-400 font-bold'">
+              {{ slotProps.data.ativo }}
             </span>
           </template>
         </Column>
@@ -193,8 +193,8 @@ const salvarProdutoMock = () => {
         </div>
 
         <div style="display: flex; flex-direction: column; gap: 4px; text-align: left;">
-          <label for="preco" class="text-xs font-medium text-slate-400 uppercase">Preço de Venda</label>
-          <InputNumber id="preco" v-model="produtoSelecionado.preco" mode="currency" currency="BRL" locale="pt-BR" class="w-full p-inputtext-sm bg-slate-950 border-slate-800 text-white" />
+          <label for="precoVenda" class="text-xs font-medium text-slate-400 uppercase">Preço de Venda</label>
+          <InputNumber id="precoVenda" v-model="produtoSelecionado.precoVenda" mode="currency" currency="BRL" locale="pt-BR" class="w-full p-inputtext-sm bg-slate-950 border-slate-800 text-white" />
         </div>
 
         <div style="display: flex; flex-direction: column; gap: 4px; text-align: left;">
@@ -208,9 +208,9 @@ const salvarProdutoMock = () => {
         </div>
 
         <div style="display: flex; flex-direction: column; gap: 4px; text-align: left;">
-          <label for="status" class="text-xs font-medium text-slate-400 uppercase">Status Operacional</label>
+          <label for="ativo" class="text-xs font-medium text-slate-400 uppercase">Status Operacional</label>
           <Dropdown 
-            id="status" 
+            id="ativo" 
             v-model="produtoSelecionado.ativo" 
             :options="['Ativo', 'Inativo']" 
             class="w-full p-inputtext-sm bg-slate-950 border-slate-800 text-left text-white" 
