@@ -51,5 +51,11 @@ public record ProdutoDto
     /// <example>e3b0c442-98fc-4c14-951a-7b3d16cae503</example>
     [Required(ErrorMessage = "A categoria vinculada é obrigatória.")]
     public required long CategoriaId { get; init; }
+
+    /// <summary>
+    /// Indica se a categoria está ativa.
+    /// </summary>
+    /// <example>true</example>
+    public bool Ativo { get; init; }
 }
 

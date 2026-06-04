@@ -53,6 +53,8 @@ public class ProdutoService(IProdutoRepository produtoRepository) : IProdutoServ
         produto.PrecoCusto = dto.PrecoCusto;
         produto.PrecoVenda = dto.PrecoVenda;
         produto.DataAlteracao = DateTimeOffset.UtcNow;
+        produto.Ativo = dto.Ativo;
+        produto.CategoriaId = dto.CategoriaId;
         await produtoRepository.AtualizarAsync(produto);
         await produtoRepository.SalvarAlteracoesAsync();
     }
@@ -68,9 +70,13 @@ public class ProdutoService(IProdutoRepository produtoRepository) : IProdutoServ
             Descricao = p.Descricao,
             PrecoCusto = p.PrecoCusto,
             PrecoVenda = p.PrecoVenda,
-            CategoriaId = p.CategoriaId,
+            Categoria = new CategoriaDto
+            {
+                Id = p.Id,
+                Descricao = p.Categoria?.Descricao,
+                Nome = p.Categoria?.Nome ?? string.Empty
+            },
             Ativo = p.Ativo,
-            CategoriaNome = p.Categoria?.Nome
         }).ToList();
 
         return new ResultadoPaginadoDto<ProdutoResponseDto>(produtosResponse, total, pagina, quantidadePorPagina);

@@ -35,6 +35,7 @@ public class ProdutoRepository(CaminhoLivreDbContext context) : IProdutoReposito
             .OrderBy(c => c.Nome)
             .Skip((pagina - 1) * quantidadePorPagina)
             .Take(quantidadePorPagina)
+            .Include(p => p.Categoria)
             .ToListAsync();
 
         return (itens, total);

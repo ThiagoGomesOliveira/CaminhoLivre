@@ -4,8 +4,22 @@ import { ref } from 'vue';
 export function useProdutos() {
     const produtos = ref([]);
     const loading = ref(false);
+    const salvando = ref(false);
+    const error = ref(null);   
 
-    const listarProdutos = async () => {
+
+    const produtoSelecionado = ref({
+        id: null,   
+        nome: '',
+        descricao: '',
+        sku: '',
+        precoVenda: 0,
+        precoCusto: 0,
+        categoriaId: null,
+        ativo: 'Ativo'
+    });
+
+    const carregarProdutos = async () => {
         loading.value = true;
         try {
             produtos.value = await produtoService.listar();
@@ -16,32 +30,66 @@ export function useProdutos() {
         }
     };
 
-    const criarProduto = async (produto) => {
-        try {
-            const novoProduto = await produtoService.criar(produto);
-            produtos.value.push(novoProduto);
-        } catch (error) {
-            console.error('Error creating produto:', error);
-        }
-    };
+    const salvarProduto = async () => {
 
-    const atualizarProduto = async (id, produto) => {
-        try {
-            const produtoAtualizado = await produtoService.atualizar(id, produto);
-            const index = produtos.value.findIndex(p => p.id === id);
-            if (index !== -1) {
-                produtos.value[index] = produtoAtualizado;
-            }
-        } catch (error) {
-            console.error('Error updating produto:', error);
+        if (!produtoSelecionado.value.nome || !produtoSelecionado.value.nome.trim()) {
+            console.warn('Nome é obrigatório.');
+            return;
         }
-    };
+        
+        const payload = {
+            id: produtoSelecionado.value.id || 0, // Adicionado para garantir o ID no PUT/POST
+            nome: produtoSelecionado.value.nome, 
+            descricao: produtoSelecionado.value.descricao,
+            sku: produtoSelecionado.value.sku,
+            precoVenda: produtoSelecionado.value.precoVenda,
+            precoCusto: produtoSelecionado.value.precoCusto,
+            categoriaId: produtoSelecionado.value.categoriaId,
+            ativo: produtoSelecionado.value.ativo === 'Ativo'
+        };
+
+        salvando.value = true;
+        try {
+
+            if (payload.id) {
+                await produtoService.atualizar(payload.id, payload);
+            } else {
+                 await produtoService.criar(payload);
+            }
+           
+            await carregarProdutos(); 
+            limparFormulario();
+
+
+        } catch (error) {
+            console.error('Error saving produto:', error);
+        }
+        finally {
+            salvando.value = false;
+        }
+    }
+
+    const limparFormulario = () => {
+        produtoSelecionado.value = {
+            id: null,   
+            nome: '',
+            descricao: '',
+            sku: '',
+            precoVenda: 0,
+            precoCusto: 0,
+            categoriaId: null,
+            ativo: ''
+        };
+    };  
 
     return {
         produtos,
+        error,
         loading,
-        listarProdutos,
-        criarProduto,
-        atualizarProduto
+        salvando,
+        produtoSelecionado,
+        carregarProdutos,
+        salvarProduto,
+        limparFormulario
     };
 }

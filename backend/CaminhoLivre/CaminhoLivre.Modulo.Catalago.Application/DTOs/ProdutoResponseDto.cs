@@ -54,15 +54,11 @@ public class ProdutoResponseDto
     /// <example>true</example>
     public bool Ativo { get; init; }
 
-    /// <summary>
-    /// Identificador numérico da categoria vinculada.
-    /// </summary>
-    /// <example>15</example>
-    public long CategoriaId { get; init; }
 
     /// <summary>
-    /// Nome descritivo da categoria para exibição imediata no front-end.
+    /// Categoria para exibição imediata no front-end.
     /// </summary>
     /// <example>Vestuário</example>
-    public required string CategoriaNome { get; init; }
+
+    public CategoriaDto Categoria { get; init; }
 }

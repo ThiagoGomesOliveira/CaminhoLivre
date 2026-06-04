@@ -2,18 +2,9 @@
 import { ref } from 'vue';
 import { onMounted } from 'vue';
 import { useProdutos } from '../../composables/useProdutos';
+import { useCategorias } from '../../composables/useCategorias';
 
-const { produtos,  loading, listarProdutos ,  criarProduto, atualizarProduto } = useProdutos();
 
-onMounted(async () => {
-    await listarProdutos();
-});
-
-// 1. FILTROS E CONTROLE DO MODAL
-const filtros = ref({
-    global: { value: null, matchMode: 'contains' }
-});
-const exibirModal = ref(false); // Controla a exibição do Modal/Dialog
 
 // Componentes do PrimeVue v4
 import DataTable from 'primevue/datatable';
@@ -25,29 +16,30 @@ import Dropdown from 'primevue/dropdown';
 import IconField from 'primevue/iconfield';
 import InputIcon from 'primevue/inputicon';
 import Dialog from 'primevue/dialog';
+import { FilterMatchMode } from '@primevue/core/api';
+const { 
+  produtos, 
+  error, 
+  loading,
+  salvando,
+  produtoSelecionado,
+  carregarProdutos ,
+  salvarProduto,
+  limparFormulario 
+} = useProdutos();
 
+const {
+   categorias, 
+   categoriaSelecionada,
+   carregarCategorias } = useCategorias();
 
-const salvando = ref(false);
-
-// Simulação de categorias para o Dropdown
-const categoriasDisponiveis = ref([
-    { id: 1, nome: 'Eletrônicos' },
-    { id: 2, nome: 'Vestuário' },
-    { id: 3, nome: 'Logística / Embalagens' }
-]);
-
-// Objeto reativo do formulário
-const produtoSelecionado = ref({
-    id: null,
-    codigoBarras: '',
-    nome: '',
-    descricao: '',
-    precoVenda: 0,
-    precoCusto: 0,
-    sku: '',
-    categoriaId: null,
-    ativo: 'Ativo'
+onMounted(async () => {
+    await carregarProdutos();
+    await carregarCategorias();
 });
+
+
+const exibirModal = ref(false); // Controla a exibição do Modal/Dialog
 
 // Ações do Fluxo de Telas
 const abrirNovoProduto = () => {
@@ -59,34 +51,25 @@ const selecionarProduto = (event) => {
     produtoSelecionado.value = { ...event.data };
     produtoSelecionado.value.ativo = event.data.status;
     
-    const cat = categoriasDisponiveis.value.find(c => c.nome === event.data.categoriaNome);
+    const cat = categorias.value.find(c => c.nome === event.data.categoria.nome);
     produtoSelecionado.value.categoriaId = cat ? cat.id : null;
     
-    exibirModal.value = true;
-};
+    if (produtoSelecionado.value.ativo === true) {
+        produtoSelecionado.value.ativo = 'Ativo';
+    } else {
+        produtoSelecionado.value.ativo = 'Inativo';
+    }
 
-const limparFormulario = () => {
-    produtoSelecionado.value = {
-        id: null,
-        nome: '',
-        descricao: '',
-        precoVenda: 0,
-        precoCusto: 0,
-        categoriaId: null,
-        ativo: 'Ativo',
-        sku: ''
-    };
+    exibirModal.value = true;
 };
 
 const fecharModal = () => {
     exibirModal.value = false;
 };
 
-const salvarProdutoMock = () => {
-    console.log('Dados prontos para enviar à API .NET:', produtoSelecionado.value);
-    alert('Produto salvo com sucesso no Mock!');
-    exibirModal.value = false;
-};
+const filtros = ref({
+    global: { value: null, matchMode: 'contains' }
+});
 </script>
 
 <template>
@@ -126,7 +109,7 @@ const salvarProdutoMock = () => {
       <DataTable 
         :value="produtos" 
         v-model:filters="filtros"
-        :globalFilterFields="['nome', 'codigoBarras', 'categoriaNome']"
+        :globalFilterFields="['nome']"
         class="p-datatable-sm text-sm w-full" 
         selectionMode="single" 
         dataKey="id"
@@ -135,7 +118,7 @@ const salvarProdutoMock = () => {
         <Column field="id" header="Cód." headerStyle="width: 5rem" class="text-slate-400"></Column>
         <Column field="nome" header="Produto" sortable class="font-medium text-slate-200"></Column>
         <Column field="sku" header="Sku" sortable class="text-slate-400" headerStyle="width: 10rem"></Column>
-        <Column field="categoriaNome" header="Categoria" sortable class="text-slate-400" headerStyle="width: 15rem"></Column>
+        <Column field="categoria.nome" header="Categoria" sortable class="text-slate-400" headerStyle="width: 15rem"></Column>
         
         <Column field="precoVenda" header="Preço de Venda" sortable headerStyle="width: 10rem" class="font-semibold">
           <template #body="slotProps">
@@ -151,11 +134,16 @@ const salvarProdutoMock = () => {
 
         
         <Column field="ativo" header="Status" headerStyle="width: 8rem">
-          <template #body="slotProps">
-            <span :class="slotProps.data.ativo === 'Ativo' ? 'text-green-400 font-bold' : 'text-red-400 font-bold'">
-              {{ slotProps.data.ativo }}
-            </span>
-          </template>
+           <template #body="slotProps">
+          <span v-if="slotProps.data.ativo === true" class="status-badge badge-success">
+                 <i class="pi pi-check-circle text-xs mr-1"></i>
+                Ativo
+          </span>
+          <span v-else class="status-badge badge-danger">
+                <i class="pi pi-times-circle text-xs mr-1"></i>
+                Inativo
+          </span>
+        </template>
         </Column>
       </DataTable>
     </div>
@@ -184,7 +172,7 @@ const salvarProdutoMock = () => {
           <Dropdown 
             id="categoria" 
             v-model="produtoSelecionado.categoriaId" 
-            :options="categoriasDisponiveis" 
+            :options="categorias" 
             optionLabel="nome" 
             optionValue="id" 
             placeholder="Selecione a categoria correspondente"
@@ -221,7 +209,7 @@ const salvarProdutoMock = () => {
       <template #footer>
         <div class="flex justify-end gap-2 pt-2 border-t border-slate-800">
           <Button label="Cancelar" icon="pi pi-times" severity="secondary" text size="small" @click="fecharModal" />
-          <Button label="Salvar Produto" icon="pi pi-save" severity="success" size="small" :loading="salvando" @click="salvarProdutoMock" />
+          <Button label="Salvar Produto" icon="pi pi-save" severity="success" size="small" :loading="salvando" @click="salvarProduto" />
         </div>
       </template>
     </Dialog>
