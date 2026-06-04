@@ -17,7 +17,7 @@ export const produtoService = {
             const response = await api.post('/api/v1/Produto', produto);
             return response.data;
         } catch (error) {
-            console.error('Error criação produto:', error);
+            console.error('Error criar produto:', error);
             throw error;
         }
     },

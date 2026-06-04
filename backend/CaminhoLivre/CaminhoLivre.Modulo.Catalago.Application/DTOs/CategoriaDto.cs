@@ -6,6 +6,8 @@ namespace CaminhoLivre.Modulo.Catalogo.Application.DTOs;
 /// </summary>
 public record CategoriaDto 
 {
+
+    public long Id { get; set; }
     /// <summary>
     /// Nome comercial e descritivo da categoria.
     /// </summary>
