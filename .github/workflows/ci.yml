@@ -1,35 +1,60 @@
-name: Integração Contínua (.NET)
+name: Integração Contínua (Caminho Livre)
 
-# O workflow será disparado sempre que um PR for aberto ou atualizado mirando a branch principal (main ou master)
+# O workflow será disparado sempre que um PR for aberto ou atualizado mirando a branch principal
 on:
   pull_request:
     branches: [ main, master ]
-    paths:
-      - 'backend/**' # Só roda se houver alterações dentro da pasta backend
 
 jobs:
-  build-and-test:
+  # ==========================================
+  # JOB 1: TESTES DO BACK-END (.NET)
+  # ==========================================
+  backend-build-and-test:
     runs-on: ubuntu-latest
-
+    
     steps:
-    # 1. Faz o checkout do código do seu repositório na máquina virtual do GitHub
     - name: Checkout do código
       uses: actions/checkout@v4
 
-    # 2. Instala o SDK do .NET 8 na máquina virtual
     - name: Configurar o ambiente .NET
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: '8.0.x'
 
-    # 3. Restaura as dependências e pacotes NuGet do seu projeto
     - name: Restaurar pacotes (NuGet)
       run: dotnet restore backend/CaminhoLivre/
 
-    # 4. Compila o projeto para garantir que não há erros de sintaxe
     - name: Compilar o projeto (Build)
       run: dotnet build backend/CaminhoLivre/ --no-restore --configuration Release
 
-    # 5. Procura e executa TODOS os projetos de teste da solution automaticamente
-    - name: Executar Testes Unitários
+    - name: Executar Testes Unitários .NET
       run: dotnet test backend/CaminhoLivre/ --no-build --configuration Release --verbosity normal
+
+  # ==========================================
+  # JOB 2: TESTES DO FRONT-END (Vue + Vitest)
+  # ==========================================
+  frontend-build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout do código
+      uses: actions/checkout@v4
+
+    # Instala o Node.js necessário para rodar o ecossistema do Vue/Vite
+    - name: Configurar o ambiente Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+        cache: 'npm'
+        # Aponta para o arquivo de dependências na subpasta correta
+        cache-dependency-path: 'frontend/CaminhoLivre/package-lock.json' 
+
+    - name: Instalar dependências do Front-end
+      # Força o GitHub a entrar na subpasta exata onde está o package.json do seu front
+      working-directory: frontend/CaminhoLivre
+      run: npm ci
+
+    - name: Executar Testes Unitários Vitest
+      working-directory: frontend/CaminhoLivre
+      # O parâmetro "-- --run" força o Vitest a rodar uma única vez e fechar
+      run: npm run test:unit -- --run
