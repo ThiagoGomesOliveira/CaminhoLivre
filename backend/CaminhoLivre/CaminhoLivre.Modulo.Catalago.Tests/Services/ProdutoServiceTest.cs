@@ -5,314 +5,294 @@ using CaminhoLivre.Modulo.Catalogo.Entities;
 using CaminhoLivre.Modulo.Catalogo.Repositories;
 using Moq;
 
-namespace CaminhoLivre.Modulo.Catalago.Tests.Services
+namespace CaminhoLivre.Modulo.Catalago.Tests.Services;
+
+[TestClass]
+public class ProdutoServiceTest
 {
-    [TestClass]
-    public class ProdutoServiceTest
+    private Mock<IProdutoRepository> _produtoRepositoryMock;
+    private ProdutoService _produtoServiceMock;
+
+    [TestInitialize]
+    public void Init()
     {
-        private Mock<IProdutoRepository> _produtoRepositoryMock;
-        private ProdutoService _produtoServiceMock;
+        _produtoRepositoryMock = new Mock<IProdutoRepository>();
+        _produtoServiceMock = new ProdutoService(_produtoRepositoryMock.Object);
+    }
 
-        [TestInitialize]
-        public void Init()
+    [TestMethod]
+    public async Task CriarAsync_QuandoDadosForemValidosESalvarComSucesso_DeveRetornarOIdDoProduto()
+    {
+        //Arrange 
+        var produtoDto = new ProdutoDto
         {
-            _produtoRepositoryMock = new Mock<IProdutoRepository>();
-            _produtoServiceMock = new ProdutoService(_produtoRepositoryMock.Object);
-        }
+            Nome = "Camiseta Polo Algodão Premium",
+            Descricao = "A Camiseta Básica Premium é a escolha perfeita para quem busca unir conforto e durabilidade.",
+            Sku = "VES-CAM-PM", 
+            PrecoCusto = 49.90m,
+            PrecoVenda = 89.90m, 
+            CategoriaId = 1,
+            Ativo = true
+        };
 
-        [TestMethod]
-        public async Task CriarAsync_QuandoDadosForemValidosESalvarComSucesso_DeveRetornarOIdDoProduto()
+        _produtoRepositoryMock
+            .Setup(repo => repo.SalvarAlteracoesAsync())
+            .ReturnsAsync(true);
+
+        //Act
+        var resultadoId = await _produtoServiceMock.CriarAsync(produtoDto);
+
+        //Assert
+        Assert.IsTrue(resultadoId >= 0);
+
+        _produtoRepositoryMock.Verify(
+            repo => repo.AdicionarAsync(It.IsAny<Produto>()),
+            Times.Once
+        );
+       
+        _produtoRepositoryMock.Verify(
+            repo => repo.SalvarAlteracoesAsync(),
+            Times.Once
+        );
+    }
+
+    [TestMethod]
+    public async Task CriarAsync_QuandoBancoFalharAoSalvar_DeveLanciarBusinessRuleException()
+    {
+        //Arrange 
+        var produtoDto = new ProdutoDto
         {
-            // --- ARRANGE
-            var produtoDto = new ProdutoDto
-            {
-                Nome = "Camiseta Polo Algodão Premium",
-                Descricao = "A Camiseta Básica Premium é a escolha perfeita para quem busca unir conforto e durabilidade.",
-                Sku = "VES-CAM-PM", 
-                PrecoCusto = 49.90m,
-                PrecoVenda = 89.90m, 
-                CategoriaId = 1,
-                Ativo = true
-            };
+            Nome = "Camiseta Polo Algodão Premium",
+            Descricao = "A Camiseta Básica Premium é a escolha perfeita para quem busca unir conforto e durabilidade.",
+            Sku = "VES-CAM-PM",
+            PrecoCusto = 49.90m,
+            PrecoVenda = 89.90m,
+            CategoriaId = 1,
+            Ativo = true
+        };
 
-            _produtoRepositoryMock
-                .Setup(repo => repo.SalvarAlteracoesAsync())
-                .ReturnsAsync(true);
+        _produtoRepositoryMock
+            .Setup(repo => repo.SalvarAlteracoesAsync())
+            .ReturnsAsync(false);
 
-            // --- ACT 
-            var resultadoId = await _produtoServiceMock.CriarAsync(produtoDto);
+        //Act Assert
+        await Assert.ThrowsExceptionAsync<BusinessRuleException>(
+            async () => await _produtoServiceMock.CriarAsync(produtoDto)
+        );
+    }
 
-            // --- ASSERT
-            Assert.IsTrue(resultadoId >= 0);
+    [TestMethod]
+    public async Task DesativarAsync_QuandoProdutoExistir_DeveChamarDesativarEAtualizarNoBanco()
+    {
+        //Arrange
+        long produtoId = 42;
 
-            _produtoRepositoryMock.Verify(
-                repo => repo.AdicionarAsync(It.IsAny<Produto>()),
-                Times.Once
-            );
+        var produtoMock = Produto.Criar("Produto Teste", "VES-CAM-PM", "Descrição", 10m, 20m, 1);
 
-            // 3. Verifica se o SalvarAlteracoesAsync foi chamado
-            _produtoRepositoryMock.Verify(
-                repo => repo.SalvarAlteracoesAsync(),
-                Times.Once
-            );
-        }
+        _produtoRepositoryMock
+            .Setup(repo => repo.ObterPorIdAsync(produtoId))
+            .ReturnsAsync(produtoMock);
 
-        [TestMethod]
-        [ExpectedException(typeof(BusinessRuleException))] // O MSTest espera que essa exceção aconteça
-        public async Task CriarAsync_QuandoBancoFalharAoSalvar_DeveLanciarBusinessRuleException()
+        //Act
+        await _produtoServiceMock.DesativarAsync(produtoId);
+
+        //Assert
+        _produtoRepositoryMock.Verify(
+            repo => repo.AtualizarAsync(produtoMock),
+            Times.Once
+        );
+
+        _produtoRepositoryMock.Verify(
+            repo => repo.SalvarAlteracoesAsync(),
+            Times.Once
+        );
+    }
+
+    [TestMethod]
+    public async Task DesativarAsync_QuandoProdutoNaoExistir_DeveLanciarNotFoundException()
+    {
+        //Arrange
+        long idInexistente = 999;
+
+        _produtoRepositoryMock
+            .Setup(repo => repo.ObterPorIdAsync(idInexistente))
+            .ReturnsAsync((Produto)null);
+
+        //Act Assert
+        await Assert.ThrowsExceptionAsync<NotFoundException>(
+            async () => await _produtoServiceMock.DesativarAsync(idInexistente)
+        );
+    }
+
+    [TestMethod]
+    public async Task AtivarAsync_QuandoProdutoExistir_DeveChamarAtivarEAtualizarNoBanco()
+    {
+        //Arrange 
+        long produtoId = 100;
+
+        var produtoMock = Produto.Criar("Produto Inativo", "VES-CAM-PM", "Descrição", 10m, 20m, 1);
+
+        _produtoRepositoryMock
+            .Setup(repo => repo.ObterPorIdAsync(produtoId))
+            .ReturnsAsync(produtoMock);
+
+        //Act
+        await _produtoServiceMock.AtivarAsync(produtoId);
+
+        //Assert
+        _produtoRepositoryMock.Verify(
+            repo => repo.AtualizarAsync(produtoMock),
+            Times.Once
+        );
+
+        _produtoRepositoryMock.Verify(
+            repo => repo.SalvarAlteracoesAsync(),
+            Times.Once
+        );
+    }
+
+    [TestMethod]
+    public async Task AtivarAsync_QuandoProdutoNaoExistir_DeveLanciarNotFoundException()
+    {
+        //Arrange 
+        long idInexistente = 999;
+
+        _produtoRepositoryMock
+            .Setup(repo => repo.ObterPorIdAsync(idInexistente))
+            .ReturnsAsync((Produto)null);
+
+        // Act Assert
+        await Assert.ThrowsExceptionAsync<NotFoundException>(
+            async () => await _produtoServiceMock.AtivarAsync(idInexistente)
+        );
+    }
+
+    [TestMethod]
+    public async Task AtualizarAsync_QuandoProdutoExistir_DeveAtualizarTodasAsPropriedadesECommitar()
+    {
+        //Arrange
+        long produtoId = 10;
+
+        var produtoOriginal = Produto.Criar("Nome Antigo", "VES-CAM-PM", "Desc Antiga", 10m, 20m, 1);
+
+        var dtoNovo = new ProdutoDto
         {
-            // --- ARRANGE ---
-            var produtoDto = new ProdutoDto
-            {
-                Nome = "Camiseta Polo Algodão Premium",
-                Descricao = "A Camiseta Básica Premium é a escolha perfeita para quem busca unir conforto e durabilidade.",
-                Sku = "VES-CAM-PM",
-                PrecoCusto = 49.90m,
-                PrecoVenda = 89.90m,
-                CategoriaId = 1,
-                Ativo = true
-            };
+            Nome = "Nome Atualizado",
+            Sku = "VES-CAM-PM",
+            Descricao = "Nova Descrição",
+            PrecoCusto = 15.00m,
+            PrecoVenda = 30.00m,
+            CategoriaId = 2,
+            Ativo = true
+        };
 
-            // Configura o mock para simular uma falha no banco (retornando false)
-            _produtoRepositoryMock
-                .Setup(repo => repo.SalvarAlteracoesAsync())
-                .ReturnsAsync(false);
+        _produtoRepositoryMock
+            .Setup(repo => repo.ObterPorIdAsync(produtoId))
+            .ReturnsAsync(produtoOriginal);
 
-            // --- ACT ---
-            await _produtoServiceMock.CriarAsync(produtoDto);
+        //Act
+        await _produtoServiceMock.AtualizarAsync(produtoId, dtoNovo);
 
-            // --- ASSERT ---
-            // O assert é feito automaticamente pelo atributo [ExpectedException] no topo do método.
-        }
+        //Assert
+        Assert.AreEqual(dtoNovo.Nome, produtoOriginal.Nome);
+        Assert.AreEqual(dtoNovo.Sku, produtoOriginal.Sku);
+        Assert.AreEqual(dtoNovo.Descricao, produtoOriginal.Descricao);
+        Assert.AreEqual(dtoNovo.PrecoCusto, produtoOriginal.PrecoCusto);
+        Assert.AreEqual(dtoNovo.PrecoVenda, produtoOriginal.PrecoVenda);
+        Assert.AreEqual(dtoNovo.CategoriaId, produtoOriginal.CategoriaId);
+        Assert.AreEqual(dtoNovo.Ativo, produtoOriginal.Ativo);
 
-        [TestMethod]
-        public async Task DesativarAsync_QuandoProdutoExistir_DeveChamarDesativarEAtualizarNoBanco()
+        _produtoRepositoryMock.Verify(
+            repo => repo.AtualizarAsync(produtoOriginal),
+            Times.Once
+        );
+
+        _produtoRepositoryMock.Verify(
+            repo => repo.SalvarAlteracoesAsync(),
+            Times.Once
+        );
+    }
+
+    [TestMethod]
+    public async Task UpdateAsync_QuandoProdutoNaoExistir_DeveLanciarNotFoundException()
+    {
+        //Arrange 
+        long idInexistente = 999;
+        var dto = new ProdutoDto
         {
-            // --- ARRANGE (Preparação) ---
-            long produtoId = 42;
+            Nome = "Teste",
+            Sku = "VES-TST-01",
+            Descricao = "Desc",
+            PrecoCusto = 10m,
+            PrecoVenda = 20m,
+            CategoriaId = 1
+        };
 
-            var produtoMock = Produto.Criar("Produto Teste", "VES-CAM-PM", "Descrição", 10m, 20m, 1);
+        _produtoRepositoryMock
+            .Setup(repo => repo.ObterPorIdAsync(idInexistente))
+            .ReturnsAsync((Produto)null);
 
-            _produtoRepositoryMock
-                .Setup(repo => repo.ObterPorIdAsync(produtoId))
-                .ReturnsAsync(produtoMock);
+        //Act Assert
+        await Assert.ThrowsExceptionAsync<NotFoundException>(
+            async () => await _produtoServiceMock.AtualizarAsync(idInexistente, dto)
+        );
+    }
 
-            // --- ACT
-            await _produtoServiceMock.DesativarAsync(produtoId);
+    [TestMethod]
+    public async Task ObterTodasAsync_QuandoExistiremProdutos_DeveRetornarResultadoPaginadoEMapeado()
+    {
+        //Arrange
+        int pagina = 1;
+        int quantidadePorPagina = 10;
+        int totalProdutosNoBanco = 15;
+        var categoriaMock = Categoria.Criar("Logística", "Categoria de paletes");
+        typeof(Categoria).GetProperty("Id")?.SetValue(categoriaMock, 5);
 
-            // --- ASSERT (Verificação) ---
-            _produtoRepositoryMock.Verify(
-                repo => repo.AtualizarAsync(produtoMock),
-                Times.Once
-            );
+        
+        var produtoMock = Produto.Criar(
+            "Palete PBR",
+            "VES-CAM-PM",
+            "Palete de madeira",
+            45m,
+            90m,
+            1
+        );
 
-            _produtoRepositoryMock.Verify(
-                repo => repo.SalvarAlteracoesAsync(),
-                Times.Once
-            );
-        }
+        typeof(Produto).GetProperty("Id")?.SetValue(produtoMock, 1);
+        typeof(Produto).GetProperty("Categoria")?.SetValue(produtoMock, categoriaMock);
+        var listaProdutosMock = new List<Produto> { produtoMock };
+        var retornoRepositorioMock = (listaProdutosMock, totalProdutosNoBanco);
 
-        [TestMethod]
-        [ExpectedException(typeof(NotFoundException))]
-        public async Task DesativarAsync_QuandoProdutoNaoExistir_DeveLanciarNotFoundException()
-        {
-            // --- ARRANGE ---
-            long idInexistente = 999;
+        _produtoRepositoryMock
+            .Setup(repo => repo.ObterTodasPaginadasAsync(pagina, quantidadePorPagina))
+            .ReturnsAsync(retornoRepositorioMock);
 
-            _produtoRepositoryMock
-                .Setup(repo => repo.ObterPorIdAsync(idInexistente))
-                .ReturnsAsync((Produto)null);
+        //Act
+        var resultado = await _produtoServiceMock.ObterTodasAsync(pagina, quantidadePorPagina);
 
-            // --- ACT ---
-            await _produtoServiceMock.DesativarAsync(idInexistente);
+        //Assert
+        Assert.IsNotNull(resultado);
+        Assert.AreEqual(totalProdutosNoBanco, resultado.TotalItens);
+        Assert.AreEqual(pagina, resultado.PaginaAtual);
+        Assert.AreEqual(1, resultado.Itens.Count());
 
-            // --- ASSERT ---
-            // Validado automaticamente pelo [ExpectedException] no topo
-        }
+        
+        var produtoMapeado = resultado.Itens.First();
+        Assert.AreEqual(1, produtoMapeado.Id);
+        Assert.AreEqual("Palete PBR", produtoMapeado.Nome);
+        Assert.AreEqual("VES-CAM-PM", produtoMapeado.Sku);
+        Assert.IsTrue(produtoMapeado.Ativo);
 
-        [TestMethod]
-        public async Task AtivarAsync_QuandoProdutoExistir_DeveChamarAtivarEAtualizarNoBanco()
-        {
-            // --- ARRANGE
-            long produtoId = 100;
+       
+        Assert.IsNotNull(produtoMapeado.Categoria);
+        Assert.AreEqual("Logística", produtoMapeado.Categoria.Nome);
+        Assert.AreEqual("Categoria de paletes", produtoMapeado.Categoria.Descricao);
 
-            var produtoMock = Produto.Criar("Produto Inativo", "VES-CAM-PM", "Descrição", 10m, 20m, 1);
+        Assert.AreEqual(1, produtoMapeado.Categoria.Id);
 
-            _produtoRepositoryMock
-                .Setup(repo => repo.ObterPorIdAsync(produtoId))
-                .ReturnsAsync(produtoMock);
-
-            // --- ACT
-            await _produtoServiceMock.AtivarAsync(produtoId);
-
-            // --- ASSERT 
-            _produtoRepositoryMock.Verify(
-                repo => repo.AtualizarAsync(produtoMock),
-                Times.Once
-            );
-
-            _produtoRepositoryMock.Verify(
-                repo => repo.SalvarAlteracoesAsync(),
-                Times.Once
-            );
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(NotFoundException))]
-        public async Task AtivarAsync_QuandoProdutoNaoExistir_DeveLanciarNotFoundException()
-        {
-            // --- ARRANGE 
-            long idInexistente = 999;
-
-            _produtoRepositoryMock
-                .Setup(repo => repo.ObterPorIdAsync(idInexistente))
-                .ReturnsAsync((Produto)null);
-
-            // --- ACT ---
-            await _produtoServiceMock.AtivarAsync(idInexistente);
-
-            // --- ASSERT ---
-            // Validado automaticamente pelo [ExpectedException] do MSTest
-        }
-
-        [TestMethod]
-        public async Task AtualizarAsync_QuandoProdutoExistir_DeveAtualizarTodasAsPropriedadesECommitar()
-        {
-            // --- ARRANGE
-            long produtoId = 10;
-
-            var produtoOriginal = Produto.Criar("Nome Antigo", "VES-CAM-PM", "Desc Antiga", 10m, 20m, 1);
-
-            var dtoNovo = new ProdutoDto
-            {
-                Nome = "Nome Atualizado",
-                Sku = "VES-CAM-PM",
-                Descricao = "Nova Descrição",
-                PrecoCusto = 15.00m,
-                PrecoVenda = 30.00m,
-                CategoriaId = 2,
-                Ativo = true
-            };
-
-            _produtoRepositoryMock
-                .Setup(repo => repo.ObterPorIdAsync(produtoId))
-                .ReturnsAsync(produtoOriginal);
-
-            // --- ACT 
-            await _produtoServiceMock.AtualizarAsync(produtoId, dtoNovo);
-
-            // --- ASSERT
-            Assert.AreEqual(dtoNovo.Nome, produtoOriginal.Nome);
-            Assert.AreEqual(dtoNovo.Sku, produtoOriginal.Sku);
-            Assert.AreEqual(dtoNovo.Descricao, produtoOriginal.Descricao);
-            Assert.AreEqual(dtoNovo.PrecoCusto, produtoOriginal.PrecoCusto);
-            Assert.AreEqual(dtoNovo.PrecoVenda, produtoOriginal.PrecoVenda);
-            Assert.AreEqual(dtoNovo.CategoriaId, produtoOriginal.CategoriaId);
-            Assert.AreEqual(dtoNovo.Ativo, produtoOriginal.Ativo);
-
-            _produtoRepositoryMock.Verify(
-                repo => repo.AtualizarAsync(produtoOriginal),
-                Times.Once
-            );
-
-            _produtoRepositoryMock.Verify(
-                repo => repo.SalvarAlteracoesAsync(),
-                Times.Once
-            );
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(NotFoundException))]
-        public async Task UpdateAsync_QuandoProdutoNaoExistir_DeveLanciarNotFoundException()
-        {
-            // --- ARRANGE
-            long idInexistente = 999;
-            var dto = new ProdutoDto
-            {
-                Nome = "Teste",
-                Sku = "VES-TST-01",
-                Descricao = "Desc",
-                PrecoCusto = 10m,
-                PrecoVenda = 20m,
-                CategoriaId = 1
-            };
-
-            _produtoRepositoryMock
-                .Setup(repo => repo.ObterPorIdAsync(idInexistente))
-                .ReturnsAsync((Produto)null);
-
-            // --- ACT ---
-            await _produtoServiceMock.AtualizarAsync(idInexistente, dto);
-
-            // --- ASSERT ---
-            // Validado automaticamente pelo [ExpectedException] do MSTest
-        }
-
-        [TestMethod]
-        public async Task ObterTodasAsync_QuandoExistiremProdutos_DeveRetornarResultadoPaginadoEMapeado()
-        {
-            // --- ARRANGE (Preparação) ---
-            int pagina = 1;
-            int quantidadePorPagina = 10;
-            int totalProdutosNoBanco = 15;
-
-           
-            var categoriaMock = Categoria.Criar("Logística", "Categoria de paletes");
-
-            // Injeta o ID 5 na categoria via Reflection (simulando a chave gerada pelo banco)
-            typeof(Categoria).GetProperty("Id")?.SetValue(categoriaMock, 5);
-
-            
-            var produtoMock = Produto.Criar(
-                "Palete PBR",
-                "VES-CAM-PM",
-                "Palete de madeira",
-                45m,
-                90m,
-                1
-            );
-
-            typeof(Produto).GetProperty("Id")?.SetValue(produtoMock, 1);
-
-            // Preenche o objeto de navegação 'Categoria' do produto que o EF traria preenchido pelo .Include()
-            typeof(Produto).GetProperty("Categoria")?.SetValue(produtoMock, categoriaMock);
-
-            // 3. Cria a lista e monta a tupla de retorno que o repositório espera
-            var listaProdutosMock = new List<Produto> { produtoMock };
-            var retornoRepositorioMock = (listaProdutosMock, totalProdutosNoBanco);
-
-            _produtoRepositoryMock
-                .Setup(repo => repo.ObterTodasPaginadasAsync(pagina, quantidadePorPagina))
-                .ReturnsAsync(retornoRepositorioMock);
-
-            // --- ACT 
-            var resultado = await _produtoServiceMock.ObterTodasAsync(pagina, quantidadePorPagina);
-
-            // --- ASSERT (Verificação) ---
-           
-            Assert.IsNotNull(resultado);
-            Assert.AreEqual(totalProdutosNoBanco, resultado.TotalItens);
-            Assert.AreEqual(pagina, resultado.PaginaAtual);
-            Assert.AreEqual(1, resultado.Itens.Count());
-
-            // 2. Validações do Produto Principal mapeado
-            var produtoMapeado = resultado.Itens.First();
-            Assert.AreEqual(1, produtoMapeado.Id);
-            Assert.AreEqual("Palete PBR", produtoMapeado.Nome);
-            Assert.AreEqual("VES-CAM-PM", produtoMapeado.Sku);
-            Assert.IsTrue(produtoMapeado.Ativo);
-
-            // 3. Validações do Objeto Aninhado (CategoriaDto)
-            Assert.IsNotNull(produtoMapeado.Categoria);
-            Assert.AreEqual("Logística", produtoMapeado.Categoria.Nome);
-            Assert.AreEqual("Categoria de paletes", produtoMapeado.Categoria.Descricao);
-
-            Assert.AreEqual(1, produtoMapeado.Categoria.Id);
-
-            _produtoRepositoryMock.Verify(
-                repo => repo.ObterTodasPaginadasAsync(pagina, quantidadePorPagina),
-                Times.Once
-            );
-        }
+        _produtoRepositoryMock.Verify(
+            repo => repo.ObterTodasPaginadasAsync(pagina, quantidadePorPagina),
+            Times.Once
+        );
     }
 }
