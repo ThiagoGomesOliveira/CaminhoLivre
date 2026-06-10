@@ -21,6 +21,9 @@ describe('Service: produtoService', () => {
     vi.clearAllMocks()
   })
 
+   // ==========================================
+  // TESTES DO MÉTODO: Listar()
+  // ==========================================
   it('Deve retornar a lista de itens quando o GET responder com sucesso', async () => {
     // --- ARRANGE ---
     const mockResponse = {

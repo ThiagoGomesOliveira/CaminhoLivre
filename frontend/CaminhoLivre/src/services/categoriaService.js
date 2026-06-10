@@ -17,7 +17,7 @@ export const categoriaService = {
             const response = await api.post('/api/v1/Categoria', categoria);
             return response.data;
         } catch (error) {
-            console.error('Error creating category:', error);
+            console.error('Error criar categoria:', error);
             throw error;
         }
     },
@@ -26,7 +26,7 @@ export const categoriaService = {
             const response = await api.put(`/api/v1/Categoria/${id}`, categoria);
             return response.data;
         } catch (error) {
-            console.error('Error updating category:', error);
+            console.error('Error atualizar categoria:', error);
             throw error;
         }
     }
