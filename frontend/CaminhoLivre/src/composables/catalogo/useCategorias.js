@@ -1,5 +1,5 @@
 import { ref } from 'vue'
-import { categoriaService } from '@/services/categoriaService'
+import { categoriaService } from '@/services/catalogo/categoriaService'
 
 export function useCategorias() {
     // 1. ESTADOS REATIVOS SEMPRE NO TOPO (Evita o erro de undefined)

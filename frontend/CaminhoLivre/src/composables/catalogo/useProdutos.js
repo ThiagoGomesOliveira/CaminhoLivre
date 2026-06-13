@@ -1,4 +1,4 @@
-import {produtoService} from '@/services/produtoService';
+import {produtoService} from '@/services/catalogo/produtoService';
 import { ref } from 'vue';
 
 export function useProdutos() {

@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue';
 import {onMounted} from 'vue';
-import {useCategorias} from '../../composables/useCategorias';
+import {useCategorias} from '../../composables/catalogo/useCategorias';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import InputText from 'primevue/inputtext';
