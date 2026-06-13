@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { categoriaService } from './categoriaService'
 
 // 1. Corrigimos o mock para retornar um export 'default' que simula o Axios
-vi.mock('../api/axios', () => {
+vi.mock('../../api/axios', () => {
   return {  
     default: {
         get: vi.fn(),
@@ -13,7 +13,7 @@ vi.mock('../api/axios', () => {
 })
 
 // 2. Importamos o mock usando a mesma sintaxe padrão (sem chaves)
-import apiMockado from '../api/axios'
+import apiMockado from '../../api/axios'
 
 describe('Service: categoriaService', () => {
   

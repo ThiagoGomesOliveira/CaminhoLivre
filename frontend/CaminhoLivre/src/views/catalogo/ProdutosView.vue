@@ -1,8 +1,8 @@
 <script setup>
 import { ref } from 'vue';
 import { onMounted } from 'vue';
-import { useProdutos } from '../../composables/useProdutos';
-import { useCategorias } from '../../composables/useCategorias';
+import { useProdutos } from '../../composables/catalogo/useProdutos';
+import { useCategorias } from '../../composables/catalogo/useCategorias';
 
 
 
