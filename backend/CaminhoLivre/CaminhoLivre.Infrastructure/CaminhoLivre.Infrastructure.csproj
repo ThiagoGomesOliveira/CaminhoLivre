@@ -16,7 +16,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CaminhoLivre.Compartilhado\CaminhoLivre.Compartilhado.csproj" />
     <ProjectReference Include="..\CaminhoLivre.Modulo.Catalogo\CaminhoLivre.Modulo.Catalogo.csproj" />
+    <ProjectReference Include="..\CaminhoLivre.Modulo.Compras\CaminhoLivre.Modulo.Compras.csproj" />
   </ItemGroup>
 
 </Project>

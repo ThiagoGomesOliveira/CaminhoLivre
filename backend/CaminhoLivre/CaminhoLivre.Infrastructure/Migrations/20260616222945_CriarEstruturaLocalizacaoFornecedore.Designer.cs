@@ -3,6 +3,7 @@ using System;
 using CaminhoLivre.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CaminhoLivre.Infrastructure.Migrations
 {
     [DbContext(typeof(CaminhoLivreDbContext))]
-    partial class CaminhoLivreDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260616222945_CriarEstruturaLocalizacaoFornecedore")]
+    partial class CriarEstruturaLocalizacaoFornecedore
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

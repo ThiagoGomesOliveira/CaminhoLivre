@@ -1,4 +1,5 @@
-﻿using CaminhoLivre.Modulo.Catalogo.Entities;
+﻿using CaminhoLivre.Compartilhado.Entities;
+using CaminhoLivre.Modulo.Catalogo.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace CaminhoLivre.Infrastructure.Persistence
@@ -7,6 +8,9 @@ namespace CaminhoLivre.Infrastructure.Persistence
     {
         public DbSet<Produto> Produtos => Set<Produto>();
         public DbSet<Categoria> Categorias => Set<Categoria>();
+        public DbSet<Estado> Estados => Set<Estado>();
+        public DbSet<Municipio> Municipios => Set<Municipio>();
+        public DbSet<Logradouro> Logradouros => Set<Logradouro>();
 
         // Mapeia suas entidades como tabelas pesquisáveis no banco
 
