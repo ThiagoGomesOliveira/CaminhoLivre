@@ -40,6 +40,9 @@ public class EstadoRepository(CaminhoLivreDbContext context) : IEstadoRepository
         return (itens, total);
     }
 
+    public async Task<List<Estado>> ObterTodosEstados()
+     => await context.Estados.ToListAsync();
+
     public async Task<bool> SalvarAlteracoesAsync()
         => await context.SaveChangesAsync() > 0;
 }
