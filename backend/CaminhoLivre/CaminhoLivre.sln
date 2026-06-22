@@ -35,6 +35,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CaminhoLivre.WebApi", "Cami
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CaminhoLivre.Compartilhado", "CaminhoLivre.Compartilhado\CaminhoLivre.Compartilhado.csproj", "{CC44089E-E50C-4BC6-8781-463F724F6230}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CaminhoLivre.Compartilhado.Application", "CaminhoLivre.Compartilhado.Application\CaminhoLivre.Compartilhado.Application.csproj", "{9C4A93B5-F792-4429-8756-3E6F16115739}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CaminhoLivre.Compartilhado.Tests", "CaminhoLivre.Compartilhado.Tests\CaminhoLivre.Compartilhado.Tests.csproj", "{17EC5B73-4E07-4BFD-990A-0EBE59333E8F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -89,6 +93,14 @@ Global
 		{CC44089E-E50C-4BC6-8781-463F724F6230}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CC44089E-E50C-4BC6-8781-463F724F6230}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CC44089E-E50C-4BC6-8781-463F724F6230}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9C4A93B5-F792-4429-8756-3E6F16115739}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9C4A93B5-F792-4429-8756-3E6F16115739}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9C4A93B5-F792-4429-8756-3E6F16115739}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9C4A93B5-F792-4429-8756-3E6F16115739}.Release|Any CPU.Build.0 = Release|Any CPU
+		{17EC5B73-4E07-4BFD-990A-0EBE59333E8F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17EC5B73-4E07-4BFD-990A-0EBE59333E8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17EC5B73-4E07-4BFD-990A-0EBE59333E8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17EC5B73-4E07-4BFD-990A-0EBE59333E8F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

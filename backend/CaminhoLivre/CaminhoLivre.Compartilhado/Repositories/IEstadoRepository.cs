@@ -10,4 +10,6 @@ public interface IEstadoRepository
     Task<bool> SalvarAlteracoesAsync();
     Task<(IEnumerable<Estado> Itens, int Total)> ObterTodasPaginadasAsync(int pagina, int quantidadePorPagina);
     Task AtualizarAsync(Estado estado);
+
+    Task<List<Estado>> ObterTodosEstados();
 }
