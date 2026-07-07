@@ -10,4 +10,5 @@ public interface IMunicipioRepository
     Task<bool> SalvarAlteracoesAsync();
     Task<(IEnumerable<Municipio> Itens, int Total)> ObterTodasPaginadasAsync(int pagina, int quantidadePorPagina);
     Task AtualizarAsync(Municipio municipio);
+    Task<IEnumerable<Municipio>> ObterTodosMunicipiosAsync();
 }
