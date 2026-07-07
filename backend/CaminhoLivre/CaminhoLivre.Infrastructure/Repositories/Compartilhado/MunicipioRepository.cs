@@ -42,6 +42,9 @@ public class MunicipioRepository(CaminhoLivreDbContext context) : IMunicipioRepo
         return (itens, total);
     }
 
+    public async Task<IEnumerable<Municipio>> ObterTodosMunicipiosAsync()
+     => await context.Municipios.ToListAsync();
+
     public async Task<bool> SalvarAlteracoesAsync()
      => await context.SaveChangesAsync() > 0;
 }
